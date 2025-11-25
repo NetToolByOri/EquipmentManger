@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>裝備規劃表</title>
+<style>
+  :root{
+    --bg:#0a0c12;
+    --bg2:#0f1320;
+    --panel:#11162a;
+    --panel2:#151b33;
+    --line:#26304d;
+    --text:#e9f0ff;
+    --muted:#93a0c7;
+    --accent:#7afcff;
+    --accent2:#a86bff;
+    --good:#22e36b;
+    --ok:#f5d147;
+    --bad:#ff5d5d;
+    --in:#4da3ff;
+    --other:#e9f0ff;
+    --warn:#ffe08a;
+    --soft-red:#ff9c9c;
+    --soft-green:#b6ffb6;
+    --soft-yellow:#fff0a6;
+    --shadow:0 8px 30px rgba(0,0,0,.45);
+    --row-cell:34px;  /* 新增：列表格子高度 */
+    font-synthesis: style;
+  }
+  *{box-sizing:border-box;}
+  input, select, textarea{
+    background:#0c1226;
+    border:1px solid var(--line);
+    border-radius:8px;
+    color:#fff;
+    font-size:14px;
+    padding:8px 10px;
+}
+input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
+.modal-body * { min-width:0; }
+  body{
+    margin:0; background:radial-gradient(1200px 900px at 80% -10%, #18224a 0%, transparent 55%) , var(--bg);
+    color:var(--text);
+    font-family: system-ui, -apple-system, "Noto Sans TC", sans-serif;
+  }
+  button{font:inherit; color:inherit;}
+  .app{
+    min-height:100dvh;
+    display:flex; flex-direction:column;
+    padding:10px 10px calc(10px + env(safe-area-inset-bottom));
+    gap:8px;
+  }
+
+  /* ====== header (區塊1) ====== */
+  .header{
+    display:flex; align-items:center; gap:8px;
+    padding:8px 10px; background:linear-gradient(135deg, var(--panel) 0%, #0d1224 100%);
+    border:1px solid var(--line); border-radius:12px;
+    position:relative;
+  }
+  .title{
+    flex:1; min-height:34px; line-height:1.2;
+    font-size:18px; font-weight:700;
+    outline:none; padding:6px 8px; border-radius:8px;
+  }
+  .title:empty:before{
+    content:attr(data-placeholder);
+    color:var(--muted);
+  }
+  .menu-btn{
+    width:40px; height:40px; border-radius:10px;
+    background:var(--panel2); border:1px solid var(--line);
+    display:grid; place-items:center; font-size:20px;
+    box-shadow: inset 0 0 0 1px rgba(122,252,255,.08);
+  }
+  .menu-pop{
+    position:absolute; right:6px; top:54px; width:min(320px, 92vw);
+    background:var(--panel); border:1px solid var(--line); border-radius:12px;
+    box-shadow:var(--shadow);
+    padding:8px; display:none; z-index:30;
+  }
+  .menu-pop.show{display:block;}
+  .menu-item{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:10px 10px; border-radius:10px; cursor:pointer;
+  }
+  .menu-item:hover{background:var(--panel2);}
+  .menu-item .label{display:flex; gap:8px; align-items:center;}
+  .menu-item .tag{
+    font-size:12px; color:var(--muted);
+    padding:2px 6px; border:1px dashed var(--line); border-radius:7px;
+  }
+  .toggle{
+    width:44px; height:24px; border-radius:999px; position:relative; flex:none;
+    background:#0b1020; border:1px solid var(--line);
+  }
+  .toggle::after{
+    content:""; position:absolute; top:2px; left:2px; width:20px; height:20px; border-radius:50%;
+    background:#2b3658; transition:.18s;
+  }
+  .toggle.on{background:#0f2a2f; border-color:#1f7a86;}
+  .toggle.on::after{left:22px; background:var(--accent);}
+  .divider{height:1px; background:var(--line); margin:6px 4px;}
+
+  /* ====== top toolbar (區塊2) ====== */
+  .topbar{
+    display:flex; gap:8px; padding:6px;
+    background:var(--panel); border:1px solid var(--line); border-radius:12px;
+  }
+  .tb-btn{
+    flex:1; padding:10px 6px; border-radius:10px;
+    background:var(--panel2); border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center; gap:6px;
+    white-space:nowrap;
+  }
+  .tb-btn.active{
+    outline:1.5px solid var(--accent);
+    box-shadow:0 0 0 2px rgba(122,252,255,.12) inset;
+  }
+  .tb-btn.small{flex:0.9}
+
+  /* ====== main view (區塊3) ====== */
+  .main{
+    flex:1; background:var(--panel);
+    border:1px solid var(--line); border-radius:12px;
+    padding:6px; overflow:auto;
+  }
+  .group{
+    margin:6px 4px 10px; border:1px solid var(--line);
+    border-radius:12px; overflow:hidden; background:rgba(10,12,18,.6);
+  }
+  .group-header{
+    padding:8px 10px; font-weight:800; letter-spacing:.5px;
+    background:linear-gradient(90deg, rgba(122,252,255,.08), rgba(168,107,255,.06));
+    border-bottom:1px solid var(--line);
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .group-header .count{color:var(--muted); font-weight:600; font-size:12px;}
+
+  .item-row{
+    display:flex; align-items:stretch;
+    min-height:var(--row-cell);
+    border-bottom:1px dashed rgba(38,48,77,.7);
+    padding:4px 1px; /* padding 稍微縮小 */
+    cursor:pointer;
+  }
+  .item-row:last-child{border-bottom:none;}
+  .col-left,.col-mid,.col-right{display:flex; align-items:center; gap:4px;}
+ .col-left{
+    width:72px;
+    flex:none;
+    padding-left:2px;
+    display:flex; align-items:center; gap:4px;
+}
+  .seq-box,.pin-box{
+    width:var(--row-cell); 
+    height:var(--row-cell);
+    border-radius:8px; flex:none;
+    background:#0c1122; border:1px solid var(--line);
+    display:grid; place-items:center; font-weight:800;
+    }
+  .pin-box{font-size:18px; color:#ffd35c; user-select:none;}
+  .pin-box.unpin{color:#6b748f;}
+
+     .col-mid{
+        flex:1;
+        padding:0 4px;
+        gap:4px;              /* gap 縮小 */
+        overflow:hidden;
+    }
+    
+    .mid-field{
+        flex:1; min-width:0;
+        overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+        font-size:13px;
+        background:#0c1226; border:1px solid var(--line); border-radius:8px;
+        height:var(--row-cell);              /* 高度統一 */
+        padding:0px 3px;                       /* 垂直 padding 收掉，只留左右 */
+        display:flex; align-items:center;    /* 內容垂直置中 */
+    }
+  .col-right{
+    flex:0 0 auto; /* 依內容決定寬度 */
+    padding-right:4px;
+    gap:6px;
+    justify-content:flex-end;
+  }
+  .square{
+      width:var(--row-cell); 
+      height:var(--row-cell);
+      border-radius:8px; flex:none;
+      background:#0c1122; border:1px solid var(--line);
+      display:grid; place-items:center; font-size:16px;
+  }
+
+  .lamp{
+    width:14px; height:14px; border-radius:50%;
+    background:var(--other); box-shadow:0 0 8px currentColor;
+  }
+  .dispo{
+      height:var(--row-cell);
+      width:calc(var(--row-cell) * 1.2); /* 長方形，寬=高度1.2倍 */
+      border-radius:8px; flex:none;
+      background:#0c1122; border:1px solid var(--line);
+      display:grid; place-items:center; font-size:14px; font-weight:700;
+  }
+
+
+  /* ====== bottom bar (區塊4) ====== */
+  .bottombar{
+    display:flex; justify-content:flex-end; align-items:center;
+    padding:6px;
+    background:var(--panel); border:1px solid var(--line); border-radius:12px;
+  }
+  .add-btn{
+    width:56px; height:56px; border-radius:14px;
+    background:linear-gradient(135deg, #16213d, #0f1a33);
+    border:1px solid var(--line);
+    display:grid; place-items:center; font-size:30px; font-weight:900;
+    color:var(--accent); box-shadow:0 0 18px rgba(122,252,255,.18);
+  }
+
+  /* ====== modal ====== */
+  .overlay{
+    position:fixed; inset:0; background:rgba(0,0,0,.55);
+    display:none; z-index:50;
+  }
+  .overlay.show{display:block;}
+  .modal{
+    position:fixed; left:50%; top:50%; transform:translate(-50%,-50%);
+    width:min(560px, 96vw); max-height:88dvh; overflow:auto;
+    background:var(--panel); border:1px solid var(--line); border-radius:14px;
+    box-shadow:var(--shadow); padding:10px; z-index:60; display:none;
+  }
+  .modal.show{display:block;}
+  .modal h3{margin:6px 2px 8px; font-size:16px;}
+  .modal .sub{color:var(--muted); font-size:12px; margin:0 2px 8px;}
+  .row{
+    display:flex; gap:8px; margin:6px 0;
+  }
+  .field{
+    flex:1; display:flex; flex-direction:column; gap:4px;
+  }
+  .field label{
+    font-size:12px; color:var(--muted); padding-left:2px;
+  }
+  .field input, .field select, .field textarea{
+    background:#0c1122; color:var(--text);
+    border:1px solid var(--line); border-radius:9px;
+    padding:8px; font-size:14px; outline:none;
+  }
+  .field textarea{min-height:72px; resize:vertical;}
+  .btn{
+    background:var(--panel2); border:1px solid var(--line); border-radius:10px;
+    padding:8px 10px; text-align:center;
+  }
+  .btn.danger{border-color:#5a1f2a; background:#241019;}
+  .btn.good{border-color:#1d5a2b; background:#0f2418;}
+  .modal-actions{
+    display:flex; gap:8px; margin-top:8px;
+  }
+  .modal-actions .btn{flex:1; font-weight:800;}
+  details{
+    background:#0c1122; border:1px solid var(--line); border-radius:10px; padding:6px;
+  }
+  summary{cursor:pointer; color:var(--muted); font-weight:700;}
+
+  /* defect blocks */
+  .defect{
+    border:1px dashed var(--line); border-radius:10px; padding:8px; margin:8px 0;
+    background:rgba(21,27,51,.6);
+  }
+  .defect .mini-actions{
+    display:flex; gap:6px; margin-top:6px;
+  }
+  .defect .mini-actions .btn{flex:1; padding:6px 8px; font-size:13px;}
+  .closed-item{
+    padding:8px; border-bottom:1px dashed var(--line);
+    font-size:13px; display:flex; flex-wrap:wrap; gap:6px;
+  }
+  .closed-item:last-child{border-bottom:none;}
+
+  /* group manager */
+  .group-panel{
+    background:#0c1122; border:1px solid var(--line); border-radius:12px;
+    padding:8px; margin:6px 0;
+  }
+  .group-list{
+    display:flex; flex-direction:column; gap:6px; margin-top:6px;
+  }
+  .group-card{
+    display:flex; align-items:center; gap:6px;
+    background:var(--panel2); border:1px solid var(--line); border-radius:10px;
+    padding:6px;
+  }
+  .group-card input{flex:1}
+  .group-card .btn{flex:0.3; font-size:12px;}
+
+  /* missing stats list */
+  .stats-list{display:flex; flex-direction:column; gap:6px;}
+  .stat-row{
+    padding:8px; border:1px solid var(--line); border-radius:10px; font-size:13px;
+    background:#0c1122; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    white-space: pre-line;
+  }
+  .stat-row.soft-red{color:var(--soft-red);}
+  .stat-row.soft-yellow{color:var(--soft-yellow);}
+  .stat-row.soft-green{color:var(--soft-green);}
+  .stat-row.white{color:var(--text);}
+
+  /* tiny helpers */
+  .badge{
+    font-size:12px; padding:2px 6px; border-radius:99px;
+    border:1px solid var(--line); color:var(--muted);
+  }
+  .menu-item.danger{
+      color:#ff6666;
+  }
+  .menu-item.danger:active{
+      background:rgba(255,50,50,.2);
+  }
+ .boot-screen{
+    position:fixed;
+    inset:0;
+    background:radial-gradient(circle at 30% 20%, rgba(0,255,180,0.18), rgba(0,0,0,0.95)),
+               radial-gradient(circle at 70% 80%, rgba(0,130,255,0.25), rgba(0,0,0,0.98));
+    backdrop-filter: blur(4px);
+    color:#36ff55;
+    font-family:monospace;
+    font-size:14px;
+    padding:20px;
+    z-index:99999;
+    display:flex;
+    align-items:flex-start;
+    justify-content:flex-start;
+    overflow:hidden;
+}
+  .boot-lines{
+      white-space:pre-line;
+      line-height:1.3;
+  }
+  
+  .boot-hide{
+      opacity:0;
+      transition:opacity .35s ease;
+      pointer-events:none;
+  }
+  .boot-screen::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background: 
+      radial-gradient(circle at 50% 30%, rgba(50,255,150,0.15), transparent 70%),
+      radial-gradient(circle at 20% 80%, rgba(0,180,255,0.15), transparent 75%);
+    mix-blend-mode: screen;
+    filter: blur(30px);
+    opacity:0.8;
+    animation: fogPulse 5s ease-in-out infinite alternate;
+    z-index:-1;
+}
+
+@keyframes fogPulse{
+    0% { opacity:0.6; transform:scale(1);}
+    100% { opacity:1; transform:scale(1.05);}
+}
+</style>
+</head>
+<body>
+  <div id="bootScreen" class="boot-screen">
+  <pre id="bootLines" class="boot-lines"></pre>
+</div>
+<div class="app">
+  <!-- 區塊1 -->
+  <div class="header">
+    <div id="title" class="title" contenteditable="true" data-placeholder="請輸入裝備種類"></div>
+    <button id="menuBtn" class="menu-btn" title="選單">☰</button>
+
+    <!-- ◑ 選單 -->
+    <div id="menuPop" class="menu-pop">
+      <div class="menu-item" data-action="saveLS">
+        <div class="label">1. 儲存 localStorage</div><div class="tag">save</div>
+      </div>
+      <div class="menu-item" data-action="exportJSON">
+        <div class="label">2. 匯出 JSON</div><div class="tag">export</div>
+      </div>
+      <div class="menu-item" data-action="importJSON">
+        <div class="label">3. 匯入 JSON</div><div class="tag">import</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="menu-item" data-toggle="name">
+        <div class="label">4. 名稱</div><div class="toggle" id="tog-name"></div>
+      </div>
+      <div class="menu-item" data-toggle="code">
+        <div class="label">5. 序號</div><div class="toggle" id="tog-code"></div>
+      </div>
+      <div class="menu-item" data-toggle="place">
+        <div class="label">6. 位置</div><div class="toggle" id="tog-place"></div>
+      </div>
+      <div class="menu-item" data-toggle="owner">
+        <div class="label">7. 持有人</div><div class="toggle" id="tog-owner"></div>
+      </div>
+      <div class="menu-item" data-toggle="status">
+        <div class="label">8. 狀態</div><div class="toggle" id="tog-status"></div>
+      </div>
+      <div class="menu-item" data-toggle="note">
+        <div class="label">9. 狀況紀錄</div><div class="toggle" id="tog-note"></div>
+      </div>
+      <div class="menu-item" data-toggle="disposal">
+        <div class="label">10. 處置狀況</div><div class="toggle" id="tog-disposal"></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="menu-item" data-action="exportDefects">
+        <div class="label">11. 匯出「缺失」到剪貼簿</div>
+      </div>
+      <div class="menu-item" data-action="exportStatus">
+        <div class="label">12. 匯出「現況」到剪貼簿</div>
+      </div>
+      <div class="menu-item danger" data-action="wipeAll">13. 刪除所有資料</div>
+    </div>
+  </div>
+
+  <!-- 區塊2 -->
+  <div class="topbar">
+    <button id="btnGroups" class="tb-btn">群組</button>
+    <button id="btnSortA" class="tb-btn active">排序 A</button>
+    <button id="btnSortB" class="tb-btn">排序 B</button>
+    <button id="btnStats"  class="tb-btn small">缺失統計</button>
+  </div>
+
+  <!-- 區塊3 -->
+  <div id="main" class="main"></div>
+
+  <!-- 區塊4 -->
+  <div class="bottombar">
+    <button id="btnAdd" class="add-btn">＋</button>
+  </div>
+</div>
+
+<!-- hidden file input for import -->
+<input id="fileInput" type="file" accept="application/json" style="display:none" />
+
+<!-- overlay -->
+<div id="overlay" class="overlay"></div>
+
+<!-- 群組管理 modal -->
+<div id="groupModal" class="modal">
+  <h3>群組集群管理</h3>
+  <div class="sub">上半=群組集群1，下半=群組集群2。名稱可改、可刪，索引 ID 永遠不變。</div>
+
+  <div class="group-panel">
+    <div class="row" style="align-items:center; justify-content:space-between;">
+      <div style="font-weight:800;">群組集群 1</div>
+      <button class="btn" data-addgroup="1">新增一個群組</button>
+    </div>
+    <div id="groupList1" class="group-list"></div>
+  </div>
+
+  <div class="group-panel">
+    <div class="row" style="align-items:center; justify-content:space-between;">
+      <div style="font-weight:800;">群組集群 2</div>
+      <button class="btn" data-addgroup="2">新增一個群組</button>
+    </div>
+    <div id="groupList2" class="group-list"></div>
+  </div>
+
+  <div class="modal-actions">
+    <button class="btn good" id="groupOk">確認</button>
+    <button class="btn" id="groupCancel">取消</button>
+  </div>
+</div>
+
+<!-- 裝備編輯 modal -->
+<div id="itemModal" class="modal">
+  <h3 id="itemModalTitle">編輯裝備</h3>
+
+  <div class="row">
+    <div class="field">
+      <label>群組1</label>
+      <select id="fGroup1"></select>
+    </div>
+    <div class="field">
+      <label>群組2</label>
+      <select id="fGroup2"></select>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="field"><label>名稱</label><input id="fName" type="text" /></div>
+  </div>
+
+  <div class="row">
+    <div class="field"><label>序號</label><input id="fCode" type="text" /></div>
+  </div>
+
+  <div class="row">
+    <div class="field"><label>位置</label><input id="fPlace" type="text" /></div>
+    <div class="field"><label>持有人</label><input id="fOwner" type="text" /></div>
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label>狀態</label>
+      <select id="fStatus">
+        <option>正常</option>
+        <option>堪用</option>
+        <option>損壞</option>
+        <option>進場</option>
+        <option>其他</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label>狀況紀錄</label>
+      <textarea id="fNote" rows="3" placeholder=""></textarea>
+    </div>
+  </div>
+
+  <!-- 第九區 -->
+  <div class="row" style="align-items:center; justify-content:space-between;">
+    <div style="font-weight:800;">缺失 / 處置狀況</div>
+    <button id="btnAddDefect" class="btn">新增缺失 ✦</button>
+  </div>
+  <div id="defectOpenList"></div>
+
+  <!-- 第十區 -->
+  <details id="defectClosedWrap" style="margin-top:6px;">
+    <summary>結案缺失（長按刪除）</summary>
+    <div id="defectClosedList"></div>
+  </details>
+
+  <div class="modal-actions">
+    <button class="btn good" id="itemOk">確認</button>
+    <button class="btn" id="itemCancel">取消</button>
+  </div>
+</div>
+
+<!-- 缺失統計 modal -->
+<div id="statsModal" class="modal">
+  <h3>缺失統計區（未結案）</h3>
+  <div class="sub">裝備名稱-序號-處置狀況-申請料件+數量</div>
+  <div id="statsList" class="stats-list"></div>
+  <div class="modal-actions">
+    <button class="btn good" id="statsClose">關閉</button>
+  </div>
+</div>
+
+<script>
+(() => {
+  const LS_KEY = "equip_planner_v1";
+
+  const $ = sel => document.querySelector(sel);
+  const main = $("#main");
+  const titleEl = $("#title");
+
+  const overlay = $("#overlay");
+  const menuBtn = $("#menuBtn");
+  const menuPop = $("#menuPop");
+  const fileInput = $("#fileInput");
+
+  const groupModal = $("#groupModal");
+  const itemModal = $("#itemModal");
+  const statsModal = $("#statsModal");
+
+  const btnGroups = $("#btnGroups");
+  const btnSortA = $("#btnSortA");
+  const btnSortB = $("#btnSortB");
+  const btnStats  = $("#btnStats");
+  const btnAdd    = $("#btnAdd");
+
+  // item form fields
+  const fGroup1 = $("#fGroup1");
+  const fGroup2 = $("#fGroup2");
+  const fName   = $("#fName");
+  const fCode   = $("#fCode");
+  const fPlace  = $("#fPlace");
+  const fOwner  = $("#fOwner");
+  const fStatus = $("#fStatus");
+  const fNote   = $("#fNote");
+  const defectOpenList = $("#defectOpenList");
+  const defectClosedList = $("#defectClosedList");
+  const btnAddDefect = $("#btnAddDefect");
+
+  const itemModalTitle = $("#itemModalTitle");
+
+  const toggles = {
+    name: $("#tog-name"),
+    code: $("#tog-code"),
+    place: $("#tog-place"),
+    owner: $("#tog-owner"),
+    status: $("#tog-status"),
+    note: $("#tog-note"),
+    disposal: $("#tog-disposal")
+  };
+
+  let state = defaultState();
+  let editingItemId = null;
+
+  function defaultState(){
+    return {
+      title: "請輸入裝備種類",
+      activeCluster: 1,
+      fieldVisibility: {
+        name:true, code:true, place:true, owner:true,
+        status:true, note:true, disposal:true
+      },
+      clusters: {
+        1: [
+          {id: uid("g1"), name:"預設A-1"},
+          {id: uid("g1"), name:"預設A-2"},
+        ],
+        2: [
+          {id: uid("g2"), name:"預設B-1"},
+          {id: uid("g2"), name:"預設B-2"},
+        ]
+      },
+      items: []
+    };
+  }
+
+  function uid(prefix="id"){
+    return prefix + "_" + Math.random().toString(36).slice(2,9) + Date.now().toString(36).slice(-4);
+  }
+
+  /* ---------- storage ---------- */
+  function saveLocal(){
+    state.title = getTitle();
+    localStorage.setItem(LS_KEY, JSON.stringify(state));
+    toast("已儲存 localStorage");
+  }
+  function loadLocal(){
+    const raw = localStorage.getItem(LS_KEY);
+    if(!raw) return false;
+    try{
+      const data = JSON.parse(raw);
+      applyImportedData(data);
+      return true;
+    }catch(e){ console.warn(e); }
+    return false;
+  }
+
+  /* ---------- silent auto json load (same basename) ---------- */
+  async function silentAutoLoadJson(){
+    try{
+      const path = location.pathname.split("/").pop() || "";
+      const base = path.replace(/\.[^.]+$/,"") || "裝備規劃表";
+      const url = `./${base}.json`;
+      const res = await fetch(url, {cache:"no-store"});
+      if(!res.ok) return;
+      const data = await res.json();
+      applyImportedData(data);
+      toast("已自動載入同名 JSON");
+    }catch(_){ /* silent */ }
+  }
+
+  function exportJSON(){
+    state.title = getTitle();
+    const filename = (state.title || "裝備規劃表") + ".json";
+    const blob = new Blob([JSON.stringify(state, null, 2)], {type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
+  function importJSON(){
+    fileInput.value = "";
+    fileInput.click();
+  }
+
+  fileInput.addEventListener("change", async e => {
+    const file = e.target.files?.[0];
+    if(!file) return;
+    const text = await file.text();
+    try{
+      const data = JSON.parse(text);
+      applyImportedData(data);
+      saveLocal();
+      toast("已匯入 JSON");
+    }catch(err){
+      alert("JSON 格式錯誤");
+    }
+  });
+
+  function applyImportedData(data){
+    // schema normalize
+    const base = defaultState();
+    state = {
+      ...base,
+      ...data,
+      fieldVisibility: {...base.fieldVisibility, ...(data.fieldVisibility||{})},
+      clusters: {
+        1: Array.isArray(data?.clusters?.[1]) ? data.clusters[1] : base.clusters[1],
+        2: Array.isArray(data?.clusters?.[2]) ? data.clusters[2] : base.clusters[2],
+      },
+      items: Array.isArray(data?.items) ? data.items : []
+    };
+    setTitle(state.title);
+    updateSortButtons();
+    updateToggles();
+    render();
+  }
+
+  /* ---------- title ---------- */
+  function getTitle(){
+    const t = titleEl.textContent.trim();
+    return t || "請輸入裝備種類";
+  }
+  function setTitle(t){
+    titleEl.textContent = t || "";
+  }
+  titleEl.addEventListener("input", () => {
+    state.title = getTitle();
+  });
+
+  /* ---------- menu pop ---------- */
+ menuBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  // 再按一次按鈕 = toggle 顯示狀態
+  menuPop.classList.toggle("show");
+});
+
+document.addEventListener("click", (e) => {
+  if (!menuPop.classList.contains("show")) return;
+
+  const t = e.target;
+  // 如果點到的是選單本身或按鈕本體，就不要關
+  if (menuPop.contains(t) || menuBtn.contains(t)) return;
+
+  // 只有「點在選單外面」才關閉
+  menuPop.classList.remove("show");
+});
+
+  menuPop.addEventListener("click", (e) => {
+    const item = e.target.closest(".menu-item");
+    if(!item) return;
+
+    const act = item.dataset.action;
+    const tog = item.dataset.toggle;
+    if(act){
+      if(act==="saveLS") saveLocal();
+      if(act==="exportJSON") exportJSON();
+      if(act==="importJSON") importJSON();
+      if(act==="exportDefects") exportDefectsToClipboard();
+      if(act==="exportStatus") exportStatusToClipboard();
+      if(act==="wipeAll") wipeAllData();
+      return;
+    }
+    if(tog){
+      state.fieldVisibility[tog] = !state.fieldVisibility[tog];
+      updateToggles();
+      saveLocal();
+      render();
+    }
+  });
+
+  function updateToggles(){
+    for(const k in toggles){
+      toggles[k].classList.toggle("on", !!state.fieldVisibility[k]);
+    }
+  }
+
+  /* ---------- top toolbar ---------- */
+  btnSortA.addEventListener("click", () => {
+    state.activeCluster = 1;
+    updateSortButtons();
+    saveLocal();
+    render();
+  });
+  btnSortB.addEventListener("click", () => {
+    state.activeCluster = 2;
+    updateSortButtons();
+    saveLocal();
+    render();
+  });
+
+  function updateSortButtons(){
+    btnSortA.classList.toggle("active", state.activeCluster===1);
+    btnSortB.classList.toggle("active", state.activeCluster===2);
+  }
+
+  btnGroups.addEventListener("click", () => openGroupModal());
+  btnStats.addEventListener("click", () => openStatsModal());
+  btnAdd.addEventListener("click", () => openItemModal(null));
+
+  /* ---------- render main ---------- */
+  function render(){
+    main.innerHTML = "";
+    const clusterId = state.activeCluster;
+    const clusterGroups = [...state.clusters[clusterId]];
+
+    // items grouped by chosen cluster
+    const groupsMap = new Map(); // gid -> items
+    for(const it of state.items){
+      const gid = (clusterId===1 ? it.group1 : it.group2) || "__ungrouped__";
+      if(!groupsMap.has(gid)) groupsMap.set(gid, []);
+      groupsMap.get(gid).push(it);
+    }
+
+    // ensure "ungrouped" if any missing group
+    const idsSet = new Set(clusterGroups.map(g=>g.id));
+    let hasUngrouped = false;
+    for(const [gid, arr] of groupsMap){
+      if(gid==="__ungrouped__" || !idsSet.has(gid)) hasUngrouped = true;
+    }
+
+    // sort groups by name
+    clusterGroups.sort((a,b)=> a.name.localeCompare(b.name, ["zh-Hant","ja","en"], {numeric:true}));
+
+    // create ordered list of group objects + ungrouped at end
+    const ordered = clusterGroups.map(g => ({...g, _gid:g.id}));
+    if(hasUngrouped){
+      ordered.push({id:"__ungrouped__", name:"未分類", _gid:"__ungrouped__"});
+    }
+
+    for(const g of ordered){
+      const items = (groupsMap.get(g._gid) || []).filter(it=>{
+        // if group deleted, treat as ungrouped
+        if(g._gid==="__ungrouped__"){
+          const real = clusterId===1 ? it.group1 : it.group2;
+          return real==="__ungrouped__" || !idsSet.has(real);
+        }
+        return true;
+      });
+
+      if(items.length===0) continue;
+
+      // sort items: pinned first then order
+      items.sort((a,b)=>{
+        if(!!a.pinned !== !!b.pinned) return a.pinned ? -1 : 1;
+        const ao = serialNum(a);
+        const bo = serialNum(b);
+        return ao - bo;
+      });
+
+      const groupEl = document.createElement("div");
+      groupEl.className = "group";
+
+      const gh = document.createElement("div");
+      gh.className = "group-header";
+      gh.innerHTML = `<div>${escapeHtml(g.name)}</div><div class="count">${items.length} items</div>`;
+      groupEl.appendChild(gh);
+
+      items.forEach((it, idx) => {
+        groupEl.appendChild(renderItemRow(it, idx+1));
+      });
+
+      main.appendChild(groupEl);
+    }
+
+    if(!main.children.length){
+      main.innerHTML = `<div style="padding:18px;color:var(--muted);text-align:center;">目前沒有資料，右下角＋新增一筆吧。</div>`;
+    }
+  }
+
+  function renderItemRow(it, seq){
+    const row = document.createElement("div");
+    row.className = "item-row";
+    row.dataset.id = it.id;
+
+    // left
+    const left = document.createElement("div");
+    left.className = "col-left";
+    const seqBox = document.createElement("div");
+    seqBox.className = "seq-box";
+    seqBox.textContent = String(seq).padStart(2,"0");
+    const pinBox = document.createElement("div");
+    pinBox.className = "pin-box " + (it.pinned ? "pin":"unpin");
+    pinBox.textContent = it.pinned ? "★":"☆";
+    pinBox.addEventListener("click", (e)=>{
+      e.stopPropagation();
+      it.pinned = !it.pinned;
+      saveLocal();
+      render();
+    });
+    left.appendChild(seqBox);
+    left.appendChild(pinBox);
+
+    // mid
+    const mid = document.createElement("div");
+    mid.className = "col-mid";
+    const visibleMidKeys = ["name","code","place","owner"].filter(k=>state.fieldVisibility[k]);
+    visibleMidKeys.forEach(k=>{
+      const box = document.createElement("div");
+      box.className = "mid-field";
+      box.textContent = (k==="name"?it.name:
+                         k==="code"?it.code:
+                         k==="place"?it.place:
+                         it.owner) || "";
+      mid.appendChild(box);
+    });
+    if(visibleMidKeys.length===0){
+      const box = document.createElement("div");
+      box.className="mid-field";
+      box.textContent="";
+      mid.appendChild(box);
+    }
+
+    // right
+    const right = document.createElement("div");
+    right.className = "col-right";
+
+    if(state.fieldVisibility.status){
+      const st = document.createElement("div"); st.className="square";
+      const lamp = document.createElement("div"); lamp.className="lamp";
+      const col = statusColor(it.status);
+      lamp.style.color = col;
+      lamp.style.background = col;
+      st.appendChild(lamp);
+      right.appendChild(st);
+    }
+
+    if(state.fieldVisibility.note){
+      const noteBox = document.createElement("div"); noteBox.className="square";
+      noteBox.textContent = (it.note && it.note.trim()) ? "💬" : "";
+      right.appendChild(noteBox);
+    }
+
+    if(state.fieldVisibility.disposal){
+      const dBox = document.createElement("div"); dBox.className="dispo";
+      const open = Array.isArray(it.defectsOpen) ? it.defectsOpen : [];
+      if(open.length){
+        const sym = disposalSymbol(open);
+        dBox.textContent = sym + open.length;
+      }else dBox.textContent = "";
+      right.appendChild(dBox);
+    }
+
+    row.appendChild(left);
+    row.appendChild(mid);
+    row.appendChild(right);
+
+    row.addEventListener("click", ()=> openItemModal(it.id));
+    return row;
+  }
+
+  function statusColor(st){
+    switch(st){
+      case "正常": return "var(--good)";
+      case "堪用": return "var(--ok)";
+      case "損壞": return "var(--bad)";
+      case "進場": return "var(--in)";
+      default: return "var(--other)";
+    }
+  }
+
+  function disposalSymbol(openDefects){
+    const has = (t)=> openDefects.some(d=>d.disposal===t);
+    if(has("無法申請")) return "🚫";
+    if(has("未申請")) return "⚠️";
+    if(has("已申請")) return "✅";
+    if(has("多申請")) return "❎";
+    return "";
+  }
+
+  /* ---------- group modal ---------- */
+  function openGroupModal(){
+    showModal(groupModal);
+    renderGroupLists();
+  }
+  function renderGroupLists(){
+    const list1 = $("#groupList1");
+    const list2 = $("#groupList2");
+    list1.innerHTML = "";
+    list2.innerHTML = "";
+
+    [1,2].forEach(cid=>{
+      const list = cid===1?list1:list2;
+      state.clusters[cid].forEach(g=>{
+        const card = document.createElement("div");
+        card.className="group-card";
+        const inp = document.createElement("input");
+        inp.value = g.name;
+        inp.addEventListener("input", ()=> g.name = inp.value);
+        const del = document.createElement("button");
+        del.className="btn danger";
+        del.textContent="刪除";
+        del.addEventListener("click", ()=>{
+          if(confirm("刪除此群組？（不會刪裝備，只會變成未分類）")){
+            state.clusters[cid] = state.clusters[cid].filter(x=>x.id!==g.id);
+            renderGroupLists();
+          }
+        });
+        card.appendChild(inp);
+        card.appendChild(del);
+        list.appendChild(card);
+      });
+    });
+  }
+
+  groupModal.addEventListener("click", (e)=>{
+    const addBtn = e.target.closest("[data-addgroup]");
+    if(addBtn){
+      const cid = Number(addBtn.dataset.addgroup);
+      const name = prompt("輸入群組名稱");
+      if(!name) return;
+      state.clusters[cid].push({id:uid("g"+cid), name:name.trim()});
+      renderGroupLists();
+    }
+  });
+
+  $("#groupOk").addEventListener("click", ()=>{
+    saveLocal();
+    hideModal(groupModal);
+    render();
+  });
+  $("#groupCancel").addEventListener("click", ()=>{
+    hideModal(groupModal);
+    render(); // reload view without saving? spec says cancel, so don't save; but we edited live.
+    // To respect cancel best-effort, reload from local:
+    loadLocal() || applyImportedData(state);
+  });
+
+  /* ---------- item modal ---------- */
+  function openItemModal(id){
+    editingItemId = id;
+    const isNew = !id;
+    itemModalTitle.textContent = isNew ? "新增裝備" : "編輯裝備";
+    // fill selects
+    fillGroupSelects();
+
+    let it;
+    if(isNew){
+      it = {
+        id: uid("item"),
+        group1: state.clusters[1][0]?.id || "__ungrouped__",
+        group2: state.clusters[2][0]?.id || "__ungrouped__",
+        name:"", code:"", place:"", owner:"",
+        status:"正常", note:"",
+        pinned:false, defectsOpen:[], defectsClosed:[]
+      };
+    }else{
+      it = state.items.find(x=>x.id===id);
+      if(!it) return;
+      it = JSON.parse(JSON.stringify(it)); // work on a copy
+      it.defectsOpen ||= [];
+      it.defectsClosed ||= [];
+    }
+
+    // store temp on modal element
+    itemModal._tempItem = it;
+
+    // write value
+    fGroup1.value = it.group1;
+    fGroup2.value = it.group2;
+    fName.value = it.name||"";
+    fCode.value = it.code||"";
+    fPlace.value = it.place||"";
+    fOwner.value = it.owner||"";
+    fStatus.value = it.status||"正常";
+    fNote.value = it.note||"";
+
+    renderDefectsOpen(it);
+    renderDefectsClosed(it);
+
+    showModal(itemModal);
+  }
+
+  function fillGroupSelects(){
+    const makeOpts = (sel, cid)=>{
+      sel.innerHTML="";
+      const groups = state.clusters[cid];
+      groups.forEach(g=>{
+        const op = document.createElement("option");
+        op.value=g.id; op.textContent=g.name;
+        sel.appendChild(op);
+      });
+      if(!groups.length){
+        const op=document.createElement("option");
+        op.value="__ungrouped__"; op.textContent="未分類";
+        sel.appendChild(op);
+      }
+    };
+    makeOpts(fGroup1,1);
+    makeOpts(fGroup2,2);
+  }
+
+  function renderDefectsOpen(it){
+    defectOpenList.innerHTML="";
+    it.defectsOpen.forEach(d=>{
+      defectOpenList.appendChild(defectBlock(d, false));
+    });
+  }
+  function renderDefectsClosed(it){
+    defectClosedList.innerHTML="";
+    it.defectsClosed.forEach(d=>{
+      const div=document.createElement("div");
+      div.className="closed-item";
+      div.innerHTML = `
+        <span class="badge">${escapeHtml(d.disposal||"")}</span>
+        <span>${escapeHtml(d.desc||"")}</span>
+        <span>${escapeHtml(d.part||"")}${d.qty?("×"+d.qty):""}</span>
+        <span>${escapeHtml(d.date||"")}</span>
+        <span>${escapeHtml(d.workNo||"")}</span>
+        <span>${escapeHtml(d.voucher||"")}</span>
+      `;
+      attachLongPressDelete(div, ()=>{
+        if(confirm("刪除此結案缺失？（無法還原）")){
+          it.defectsClosed = it.defectsClosed.filter(x=>x.id!==d.id);
+          renderDefectsClosed(it);
+        }
+      });
+      defectClosedList.appendChild(div);
+    });
+  }
+
+  btnAddDefect.addEventListener("click", ()=>{
+    const it = itemModal._tempItem;
+    it.defectsOpen.push({
+      id: uid("def"),
+      desc:"", disposal:"未申請", part:"", qty:"", date:"", workNo:"", voucher:""
+    });
+    renderDefectsOpen(it);
+  });
+
+  function defectBlock(d, closed){
+    const wrap=document.createElement("div");
+    wrap.className="defect";
+    wrap.dataset.id=d.id;
+
+    wrap.innerHTML = `
+      <div class="row">
+        <div class="field"><label>缺失狀況</label><input data-k="desc" type="text" value="${escapeAttr(d.desc||"")}"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>處置狀況 ✿</label>
+          <select data-k="disposal">
+            ${["未申請","已申請","無法申請","多申請"].map(x=>`
+              <option ${d.disposal===x?"selected":""}>${x}</option>
+            `).join("")}
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="field"><label>申請料件</label><input data-k="part" type="text" value="${escapeAttr(d.part||"")}"></div>
+        <div class="field"><label>數量</label><input data-k="qty" type="number" value="${escapeAttr(d.qty??"")}"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>日期</label><input data-k="date" type="text" placeholder="格式不拘，可不寫" value="${escapeAttr(d.date||"")}"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>工令</label><input data-k="workNo" type="text" placeholder="可不寫" value="${escapeAttr(d.workNo||"")}"></div>
+        <div class="field"><label>憑單</label><input data-k="voucher" type="text" placeholder="可不寫" value="${escapeAttr(d.voucher||"")}"></div>
+      </div>
+      <div class="mini-actions">
+        <button class="btn good" data-act="close">結案</button>
+        <button class="btn danger" data-act="del">刪除</button>
+      </div>
+    `;
+
+    wrap.addEventListener("input", (e)=>{
+      const k = e.target.dataset.k;
+      if(!k) return;
+      d[k] = (e.target.type==="number") ? (e.target.value===""? "" : Number(e.target.value)) : e.target.value;
+    });
+
+    wrap.addEventListener("click", (e)=>{
+      const act = e.target.dataset.act;
+      if(!act) return;
+      const it = itemModal._tempItem;
+
+      if(act==="del"){
+        if(confirm("刪除此缺失？")){
+          it.defectsOpen = it.defectsOpen.filter(x=>x.id!==d.id);
+          renderDefectsOpen(it);
+        }
+      }
+      if(act==="close"){
+        if(confirm("結案此缺失？")){
+          it.defectsOpen = it.defectsOpen.filter(x=>x.id!==d.id);
+          it.defectsClosed.push(d);
+          renderDefectsOpen(it);
+          renderDefectsClosed(it);
+        }
+      }
+    });
+
+    return wrap;
+  }
+
+  $("#itemOk").addEventListener("click", ()=>{
+    const it = itemModal._tempItem;
+
+    it.group1 = fGroup1.value || "__ungrouped__";
+    it.group2 = fGroup2.value || "__ungrouped__";
+    it.name   = fName.value.trim();
+    it.code   = fCode.value.trim();
+    it.place  = fPlace.value.trim();
+    it.owner  = fOwner.value.trim();
+    it.status = fStatus.value;
+    it.note   = fNote.value;
+
+    // merge into state.items
+    const idx = state.items.findIndex(x=>x.id===it.id);
+    if(idx>=0) state.items[idx] = it;
+    else state.items.push(it);
+
+    saveLocal();
+    hideModal(itemModal);
+    render();
+  });
+
+  $("#itemCancel").addEventListener("click", ()=>{
+    hideModal(itemModal);
+  });
+
+  /* ---------- stats modal ---------- */
+  function openStatsModal(){
+    const list = $("#statsList");
+    list.innerHTML = "";
+    const rows = collectOpenDefects();
+    if(!rows.length){
+      list.innerHTML = `<div style="padding:12px;color:var(--muted);text-align:center;">目前沒有未結案缺失。</div>`;
+    }else{
+        rows.forEach(r=>{
+        const div=document.createElement("div");
+        div.className="stat-row " + disposalClass(r.disposal);
+        div.textContent = 
+          `${r.name}-${r.code}-${r.desc}\n` +
+          `${r.disposal}-${r.part}${r.qty?("×"+r.qty):""}`;
+        list.appendChild(div);
+      });
+    }
+    showModal(statsModal);
+  }
+  $("#statsClose").addEventListener("click", ()=>hideModal(statsModal));
+
+function collectOpenDefects(){
+  const out=[];
+  state.items.forEach(it=>{
+    (it.defectsOpen||[]).forEach(d=>{
+      out.push({
+        name: it.name||"",
+        code: it.code||"",
+        desc: d.desc || "",
+        disposal: d.disposal||"",
+        part: d.part||"",
+        qty: d.qty||""
+      });
+    });
+  });
+  return out;
+}
+  function disposalClass(t){
+    switch(t){
+      case "無法申請": return "soft-red";
+      case "未申請": return "soft-yellow";
+      case "多申請": return "soft-green";
+      default: return "white";
+    }
+  }
+
+  /* ---------- export to clipboard ---------- */
+ async function exportDefectsToClipboard(){
+  const rows = collectOpenDefects();
+  const text = rows.map(r =>
+    `${r.name}-${r.code}-${r.desc}\n` +
+    `${r.disposal}-${r.part}${r.qty?("×"+r.qty):""}`
+  ).join("\n");
+  await copyText(text || "");
+  toast("缺失已複製到剪貼簿");
+}
+
+  async function exportStatusToClipboard(){
+    alert("會根據當前顯示欄位匯出資料");
+    const clusterId = state.activeCluster;
+    const groups = [...state.clusters[clusterId]]
+      .sort((a,b)=>a.name.localeCompare(b.name, ["zh-Hant","ja","en"], {numeric:true}));
+
+    const lines=[];
+    const visMid = ["name","code","place","owner"].filter(k=>state.fieldVisibility[k]);
+
+    const mapItemsByGroup = new Map();
+    for(const it of state.items){
+      const gid = (clusterId===1 ? it.group1 : it.group2) || "__ungrouped__";
+      if(!mapItemsByGroup.has(gid)) mapItemsByGroup.set(gid, []);
+      mapItemsByGroup.get(gid).push(it);
+    }
+    const idsSet = new Set(groups.map(g=>g.id));
+    let hasUngrouped=false;
+    for(const [gid] of mapItemsByGroup){
+      if(gid==="__ungrouped__" || !idsSet.has(gid)) {hasUngrouped=true; break;}
+    }
+    const ordered = groups.map(g=>({...g, _gid:g.id}));
+    if(hasUngrouped) ordered.push({id:"__ungrouped__", name:"未分類", _gid:"__ungrouped__"});
+
+    for(const g of ordered){
+      // gather items for this group
+      const arr = (mapItemsByGroup.get(g._gid)||[]).filter(it=>{
+        if(g._gid==="__ungrouped__"){
+          const real = clusterId===1 ? it.group1 : it.group2;
+          return real==="__ungrouped__" || !idsSet.has(real);
+        }
+        return true;
+      });
+      if(!arr.length) continue;
+      arr.sort((a,b)=>{
+        if(!!a.pinned !== !!b.pinned) return a.pinned ? -1 : 1;
+        const ao = serialNum(a);
+        const bo = serialNum(b);
+        return ao - bo;
+      });
+
+      lines.push(`群組：${g.name}`);
+      arr.forEach((it, idx)=>{
+        const seq = String(idx+1).padStart(2,"0");
+        const parts=[seq];
+        visMid.forEach(k=>{
+          const v = (k==="name"?it.name:
+                     k==="code"?it.code:
+                     k==="place"?it.place:it.owner) || "";
+          parts.push(v);
+        });
+        parts.push(it.status||"");
+        lines.push(parts.join("-"));
+      });
+      lines.push(""); // blank line between groups
+    }
+
+    await copyText(lines.join("\n").trim());
+    toast("現況已複製到剪貼簿");
+  }
+
+  async function copyText(text){
+    try{
+      await navigator.clipboard.writeText(text);
+    }catch(e){
+      // fallback
+      const ta=document.createElement("textarea");
+      ta.value=text; document.body.appendChild(ta);
+      ta.select(); document.execCommand("copy"); ta.remove();
+    }
+  }
+
+  /* ---------- modal helpers ---------- */
+  function showModal(m){
+    overlay.classList.add("show");
+    m.classList.add("show");
+    menuPop.classList.remove("show");
+  }
+  function hideModal(m){
+    m.classList.remove("show");
+    overlay.classList.remove("show");
+  }
+  overlay.addEventListener("click", ()=>{
+    [groupModal,itemModal,statsModal].forEach(m=>m.classList.remove("show"));
+    overlay.classList.remove("show");
+  });
+
+  /* ---------- long press delete ---------- */
+  function attachLongPressDelete(el, onLong){
+    let t=null; let moved=false;
+    el.addEventListener("touchstart", ()=>{
+      moved=false;
+      t=setTimeout(()=>{ if(!moved) onLong(); }, 550);
+    }, {passive:true});
+    el.addEventListener("touchmove", ()=>{ moved=true; clearTimeout(t); }, {passive:true});
+    el.addEventListener("touchend", ()=> clearTimeout(t), {passive:true});
+  }
+
+  /* ---------- utilities ---------- */
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, m=>({
+      "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
+    }[m]));
+  }
+  function escapeAttr(s){ return escapeHtml(s).replace(/"/g,"&quot;"); }
+
+  function toast(msg){
+    const d=document.createElement("div");
+    d.textContent=msg;
+    d.style.cssText=`
+      position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
+      background:#0c1122; border:1px solid var(--line); color:var(--text);
+      padding:8px 12px; border-radius:999px; z-index:999; font-size:13px;
+      box-shadow:var(--shadow); opacity:0; transition:.2s;
+    `;
+    document.body.appendChild(d);
+    requestAnimationFrame(()=>d.style.opacity=1);
+    setTimeout(()=>{ d.style.opacity=0; setTimeout(()=>d.remove(),250); }, 1200);
+  }
+  
+  function serialNum(it){
+    const n = Number(it.code);
+    return Number.isFinite(n) ? n : Infinity;
+  }
+
+  function wipeAllData(){
+      if(!confirm("確定要刪除所有資料嗎？（不會刪除 localStorage ）")) return;
+  
+      // 只清除目前頁面的資料，不動 localStorage
+      state.items = [];
+      state.title = "請輸入裝備種類";
+      setTitle(state.title);
+  
+      render();
+      toast("資料已清除");
+    }
+
+  /* ---------- init ---------- */
+  updateToggles();
+  const hasLS = loadLocal();
+  if(!hasLS){
+    setTitle(state.title);
+  }
+  updateSortButtons();
+  render();
+  silentAutoLoadJson(); // 靜默嘗試同名 json
+
+})();
+
+// ---------- 裝逼開機畫面 ----------
+  const bootLinesEl = document.getElementById("bootLines");
+  const bootScreenEl = document.getElementById("bootScreen");
+
+  const bootMessages = [
+    "[ INIT ] Loading Core Modules...",
+    "[ OK   ] Core Modules Online.",
+    "[ INIT ] Cluster Engine...",
+    "[ OK   ] Cluster Engine Initialized.",
+    "[ INIT ] Data Layer Binding...",
+    "[ OK   ] Data Layer Operational.",
+    "[ INIT ] Group Cluster A...",
+    "[ OK   ] Cluster A Ready.",
+    "[ INIT ] Group Cluster B...",
+    "[ OK   ] Cluster B Ready.",
+    "[ INIT ] Item Renderer...",
+    "[ OK   ] Renderer Online.",
+    "[ INIT ] Defect Engine...",
+    "[ OK   ] Defect Engine Operational.",
+    "[ RUN  ] All Systems Nominal."
+  ];
+
+  let bootSkip = false;
+
+  // 點一下直接跳過
+  bootScreenEl.addEventListener("click", ()=>{ bootSkip = true; hideBoot(); });
+
+  async function runBoot(){
+    for(let msg of bootMessages){
+      if(bootSkip) return;
+      bootLinesEl.textContent += msg + "\n";
+      await new Promise(r=>setTimeout(r, 80 + Math.random()*80)); // 80~160ms
+    }
+
+    // 全部顯示完後停 1 秒
+    if(!bootSkip) await new Promise(r=>setTimeout(r, 1000));
+
+    hideBoot();
+  }
+
+  function hideBoot(){
+    bootScreenEl.classList.add("boot-hide");
+    setTimeout(()=> bootScreenEl.remove(), 400);
+  }
+
+  // 自動開始
+  runBoot();
+</script>
+</body>
+</html>
