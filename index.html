@@ -369,6 +369,21 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
     0% { opacity:0.6; transform:scale(1);}
     100% { opacity:1; transform:scale(1.05);}
 }
+.modal-delete-btn{
+  position:absolute;
+  top:8px;
+  right:10px;
+  padding:4px 10px;
+  border-radius:999px;
+  border:1px solid #5a1f2a;
+  background:#241019;
+  color:#ff9c9c;
+  font-size:12px;
+  cursor:pointer;
+}
+.modal-delete-btn:active{
+  background:#3a1824;
+}
 </style>
 </head>
 <body>
@@ -481,6 +496,7 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
 
 <!-- 裝備編輯 modal -->
 <div id="itemModal" class="modal">
+  <button id="itemDelete" class="modal-delete-btn">刪除</button>
   <h3 id="itemModalTitle">編輯裝備</h3>
 
   <div class="row">
@@ -578,6 +594,7 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
   const btnSortB = $("#btnSortB");
   const btnStats  = $("#btnStats");
   const btnAdd    = $("#btnAdd");
+  const btnItemDelete = $("#itemDelete");
 
   // item form fields
   const fGroup1 = $("#fGroup1");
@@ -1031,7 +1048,9 @@ document.addEventListener("click", (e) => {
     itemModalTitle.textContent = isNew ? "新增裝備" : "編輯裝備";
     // fill selects
     fillGroupSelects();
-
+    if(btnItemDelete){
+      btnItemDelete.style.display = isNew ? "none" : "inline-flex";
+    }
     let it;
     if(isNew){
       it = {
@@ -1215,6 +1234,20 @@ document.addEventListener("click", (e) => {
 
   $("#itemCancel").addEventListener("click", ()=>{
     hideModal(itemModal);
+  });
+
+btnItemDelete.addEventListener("click", ()=>{
+    const it = itemModal._tempItem;
+    if(!it || !it.id) return;
+
+    if(!confirm("確定要刪除這筆裝備嗎？（無法還原）")) return;
+
+    // 從 state.items 移除
+    state.items = state.items.filter(x => x.id !== it.id);
+
+    saveLocal();
+    hideModal(itemModal);
+    render();
   });
 
   /* ---------- stats modal ---------- */
