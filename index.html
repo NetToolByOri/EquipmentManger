@@ -53,12 +53,14 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
   }
 
   /* ====== header (區塊1) ====== */
-  .header{
+ .header{
     display:flex; align-items:center; gap:8px;
     padding:8px 10px; background:linear-gradient(135deg, var(--panel) 0%, #0d1224 100%);
     border:1px solid var(--line); border-radius:12px;
-    position:relative;
-  }
+    position:sticky;
+    top:0;
+    z-index:20;
+}
   .title{
     flex:1; min-height:34px; line-height:1.2;
     font-size:18px; font-weight:700;
@@ -121,11 +123,12 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
   .tb-btn.small{flex:0.9}
 
   /* ====== main view (區塊3) ====== */
-  .main{
+ .main{
     flex:1; background:var(--panel);
     border:1px solid var(--line); border-radius:12px;
-    padding:6px; overflow:auto;
-  }
+    padding:6px;
+    overflow:visible;
+}
   .group{
     margin:6px 4px 10px; border:1px solid var(--line);
     border-radius:12px; overflow:hidden; background:rgba(10,12,18,.6);
@@ -211,7 +214,10 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
     display:flex; justify-content:flex-end; align-items:center;
     padding:6px;
     background:var(--panel); border:1px solid var(--line); border-radius:12px;
-  }
+    position:sticky;
+    bottom:0;
+    z-index:20;
+}
   .add-btn{
     width:56px; height:56px; border-radius:14px;
     background:linear-gradient(135deg, #16213d, #0f1a33);
