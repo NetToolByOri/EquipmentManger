@@ -384,6 +384,110 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
 .modal-delete-btn:active{
   background:#3a1824;
 }
+/* === Browser Warning Modal === */
+.bw-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at top, rgba(120, 200, 255, 0.22), transparent 55%),
+              radial-gradient(circle at bottom, rgba(255, 140, 220, 0.18), transparent 55%),
+              rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(10px);
+}
+
+.bw-hidden {
+  display: none;
+}
+
+.bw-dialog {
+  width: min(90vw, 420px);
+  background: linear-gradient(145deg, #141823, #13151d);
+  border-radius: 16px;
+  border: 1px solid rgba(140, 220, 255, 0.6);
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.55),
+              0 0 0 1px rgba(20, 230, 230, 0.25);
+  padding: 16px 18px 14px;
+  color: #f5f7ff;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  transform: scale(0.9);
+  opacity: 0;
+  animation: bw-pop-in 0.18s ease-out forwards;
+}
+
+@keyframes bw-pop-in {
+  0%   { transform: scale(0.9); opacity: 0; }
+  60%  { transform: scale(1.02); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.bw-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.bw-icon {
+  font-size: 1.3rem;
+}
+
+.bw-title {
+  font-size: 0.98rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.bw-body {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #d8e1ff;
+  margin-bottom: 10px;
+}
+
+.bw-body p {
+  margin: 2px 0;
+}
+
+.bw-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+#bw-confirm-btn {
+  appearance: none;
+  border: none;
+  border-radius: 999px;
+  padding: 6px 16px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #39e3ff, #55ffa7);
+  color: #041216;
+  box-shadow: 0 0 12px rgba(80, 255, 200, 0.45);
+  cursor: pointer;
+  transition: transform 0.08s ease-out, box-shadow 0.08s ease-out, filter 0.08s ease-out;
+}
+
+#bw-confirm-btn:active {
+  transform: scale(0.96) translateY(1px);
+  box-shadow: 0 0 4px rgba(80, 255, 200, 0.35);
+  filter: brightness(0.92);
+}
+
+/* 防止點背景就關閉：直接吃掉 pointer event */
+.bw-overlay {
+  pointer-events: auto;
+}
+
+.bw-dialog {
+  pointer-events: auto;
+}
+
 </style>
 </head>
 <body>
@@ -1502,6 +1606,120 @@ function collectOpenDefects(){
 
   // 自動開始
   runBoot();
+  
+  function detectRuntime() {
+  const uaRaw = navigator.userAgent || navigator.vendor || "";
+  const ua = uaRaw.toLowerCase();
+
+  // 已知 in-app browsers
+  const isLine   = ua.includes(" line/") || ua.includes(" line ");
+  const isFBApp  = ua.includes("fbav") || ua.includes("fb_iab") || ua.includes("facebook");
+  const isIG     = ua.includes("instagram");
+  const isWeChat = ua.includes("micromessenger");
+  const isTwitter= ua.includes("twitter");
+  const isTikTok = ua.includes("tiktok");
+
+  const isInAppBrowser = isLine || isFBApp || isIG || isWeChat || isTwitter || isTikTok;
+
+  let inAppName = "";
+  if (isLine)    inAppName = "LINE 內建瀏覽器";
+  else if (isIG) inAppName = "Instagram 內建瀏覽器";
+  else if (isFBApp) inAppName = "Facebook 內建瀏覽器";
+  else if (isWeChat) inAppName = "WeChat 內建瀏覽器";
+  else if (isTwitter) inAppName = "Twitter 內建瀏覽器";
+  else if (isTikTok)  inAppName = "TikTok 內建瀏覽器";
+  else if (isInAppBrowser) inAppName = "App 內建瀏覽器";
+
+  // 主流瀏覽器判定
+  const vendor = (navigator.vendor || "").toLowerCase();
+  const isChrome = ua.includes("chrome") && ua.includes("safari") && vendor.includes("google");
+  const isFirefox= ua.includes("firefox");
+  const isSafari = ua.includes("safari") && vendor.includes("apple");
+  const isEdge   = ua.includes("edg/");
+
+  const isKnownStandalone = isChrome || isFirefox || isSafari || isEdge;
+
+  return {
+    uaRaw,
+    ua,
+    isInAppBrowser,
+    inAppName,
+    isKnownStandalone
+  };
+}
+
+// ===== Modal 控制 =====
+function showBrowserWarning(kind, runtime) {
+  const overlay = document.getElementById("browser-warning-overlay");
+  const titleEl = document.getElementById("bw-title");
+  const line1El = document.getElementById("bw-message-line1");
+  const line2El = document.getElementById("bw-message-line2");
+  const line3El = document.getElementById("bw-message-line3");
+
+  if (!overlay || !titleEl || !line1El) return;
+
+  if (kind === "inApp") {
+    const name = runtime.inAppName || "內建瀏覽器";
+    titleEl.textContent = "⚠ 小心小心～";
+    line1El.textContent = `看起來你現在是透過「${name}」開啟這個工具。`;
+    line2El.textContent = "這類內建瀏覽器常常會限制檔案下載，JSON 匯出有可能失敗，或是資料被鎖在這個 App 裡。";
+    line3El.textContent = "建議用右上角或分享選單選擇「在外部瀏覽器開啟」，例如 Chrome、Safari、Edge 等，再重新打開這個連結喔！";
+  } else if (kind === "unknown") {
+    titleEl.textContent = "𐂂 小提醒";
+    line1El.textContent = "你現在使用的似乎不是常見的瀏覽器（Chrome / Safari / Firefox / Edge）。";
+    line2El.textContent = "在某些環境下，JSON 匯出可能會失敗或行為不穩定。";
+    line3El.textContent = "若遇到問題，建議先測試一次匯出，或改用常規瀏覽器以確保資料能安全備份喔。";
+  } else {
+    return;
+  }
+
+  overlay.classList.remove("bw-hidden");
+}
+
+// 初始化：頁面載入時跑一次
+function initBrowserWarning() {
+  const runtime = detectRuntime();
+  const overlay = document.getElementById("browser-warning-overlay");
+  const confirmBtn = document.getElementById("bw-confirm-btn");
+
+  if (!overlay || !confirmBtn) return;
+
+  // 綁定關閉按鈕
+  confirmBtn.addEventListener("click", () => {
+    overlay.classList.add("bw-hidden");
+  });
+
+  // 不提供「點背景就關閉」，所以這裡不綁 overlay click 關閉
+  // 只要判斷完再決定要不要顯示即可
+
+  if (runtime.isInAppBrowser) {
+    // 已知 in-app → 顯示強警告
+    showBrowserWarning("inApp", runtime);
+  } else if (!runtime.isKnownStandalone) {
+    // 非主流瀏覽器 → 一般級提醒
+    showBrowserWarning("unknown", runtime);
+  }
+  // 主流瀏覽器 → 安靜放行
+}
+
+document.addEventListener("DOMContentLoaded", initBrowserWarning);
 </script>
+<!-- Browser Warning Modal -->
+<div id="browser-warning-overlay" class="bw-overlay bw-hidden">
+  <div class="bw-dialog">
+    <div class="bw-header">
+      <span class="bw-icon">⚠️</span>
+      <span class="bw-title" id="bw-title">小提醒</span>
+    </div>
+    <div class="bw-body">
+      <p id="bw-message-line1"></p>
+      <p id="bw-message-line2"></p>
+      <p id="bw-message-line3"></p>
+    </div>
+    <div class="bw-footer">
+      <button id="bw-confirm-btn" type="button">我知道了</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
