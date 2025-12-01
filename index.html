@@ -85,7 +85,7 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
   .menu-pop.show{display:block;}
   .menu-item{
     display:flex; align-items:center; justify-content:space-between;
-    padding:10px 10px; border-radius:10px; cursor:pointer;
+    padding:7px 8px; border-radius:10px; cursor:pointer;
   }
   .menu-item:hover{background:var(--panel2);}
   .menu-item .label{display:flex; gap:8px; align-items:center;}
@@ -107,11 +107,21 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
 
   /* ====== top toolbar (區塊2) ====== */
   .topbar{
-    display:flex; gap:8px; padding:6px;
-    background:var(--panel); border:1px solid var(--line); border-radius:12px;
+    display:flex;
+    gap:8px;
+    padding:6px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:12px;
+
+    /* 新增：跟在 header 底下一起黏住 */
+    position: sticky;
+    top:60px;      /* 這個值 = header 高度 + 中間間距，可視覺微調 */
+    z-index:19;    /* 比 header 小一點，確保在它下面 */
   }
+
   .tb-btn{
-    flex:1; padding:10px 6px; border-radius:10px;
+    flex:1; padding:6px 4px; border-radius:8px;
     background:var(--panel2); border:1px solid var(--line);
     display:flex; align-items:center; justify-content:center; gap:6px;
     white-space:nowrap;
@@ -130,7 +140,7 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
     overflow:visible;
 }
   .group{
-    margin:6px 4px 10px; border:1px solid var(--line);
+    margin:0px 0px 0px; border:1px solid var(--line);
     border-radius:12px; overflow:hidden; background:rgba(10,12,18,.6);
   }
   .group-header{
@@ -149,17 +159,17 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
     cursor:pointer;
   }
   .item-row:last-child{border-bottom:none;}
-  .col-left,.col-mid,.col-right{display:flex; align-items:center; gap:4px;}
+  .col-left,.col-mid,.col-right{display:flex; align-items:center}
  .col-left{
     width:72px;
     flex:none;
     padding-left:2px;
-    display:flex; align-items:center; gap:4px;
+    display:flex; align-items:center; gap:3px;
 }
   .seq-box,.pin-box{
     width:var(--row-cell); 
     height:var(--row-cell);
-    border-radius:8px; flex:none;
+    border-radius:6px; flex:none;
     background:#0c1122; border:1px solid var(--line);
     display:grid; place-items:center; font-weight:800;
     }
@@ -168,8 +178,8 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
 
      .col-mid{
         flex:1;
-        padding:0 4px;
-        gap:4px;              /* gap 縮小 */
+        padding:0 3px;
+        gap:3px;              /* gap 縮小 */
         overflow:hidden;
     }
     
@@ -177,21 +187,21 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
         flex:1; min-width:0;
         overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
         font-size:13px;
-        background:#0c1226; border:1px solid var(--line); border-radius:8px;
+        background:#0c1226; border:1px solid var(--line); border-radius:6px;
         height:var(--row-cell);              /* 高度統一 */
         padding:0px 3px;                       /* 垂直 padding 收掉，只留左右 */
         display:flex; align-items:center;    /* 內容垂直置中 */
     }
   .col-right{
     flex:0 0 auto; /* 依內容決定寬度 */
-    padding-right:4px;
-    gap:6px;
+    padding-right:2px;
+    gap:3px;
     justify-content:flex-end;
   }
   .square{
       width:var(--row-cell); 
       height:var(--row-cell);
-      border-radius:8px; flex:none;
+      border-radius:6px; flex:none;
       background:#0c1122; border:1px solid var(--line);
       display:grid; place-items:center; font-size:16px;
   }
@@ -203,7 +213,7 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
   .dispo{
       height:var(--row-cell);
       width:calc(var(--row-cell) * 1.2); /* 長方形，寬=高度1.2倍 */
-      border-radius:8px; flex:none;
+      border-radius:6px; flex:none;
       background:#0c1122; border:1px solid var(--line);
       display:grid; place-items:center; font-size:14px; font-weight:700;
   }
@@ -234,7 +244,7 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
   .overlay.show{display:block;}
   .modal{
     position:fixed; left:50%; top:50%; transform:translate(-50%,-50%);
-    width:min(560px, 96vw); max-height:88dvh; overflow:auto;
+    width:min(660px, 96vw); max-height:88dvh; overflow:auto;
     background:var(--panel); border:1px solid var(--line); border-radius:14px;
     box-shadow:var(--shadow); padding:10px; z-index:60; display:none;
   }
@@ -242,7 +252,7 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
   .modal h3{margin:6px 2px 8px; font-size:16px;}
   .modal .sub{color:var(--muted); font-size:12px; margin:0 2px 8px;}
   .row{
-    display:flex; gap:8px; margin:6px 0;
+    display:flex; gap:8px; margin:0px;
   }
   .field{
     flex:1; display:flex; flex-direction:column; gap:4px;
@@ -257,7 +267,7 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
   }
   .field textarea{min-height:72px; resize:vertical;}
   .btn{
-    background:var(--panel2); border:1px solid var(--line); border-radius:10px;
+    background:var(--panel2); border:1px solid var(--line); border-radius:6px;
     padding:8px 10px; text-align:center;
   }
   .btn.danger{border-color:#5a1f2a; background:#241019;}
@@ -295,17 +305,21 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
     display:flex; flex-direction:column; gap:6px; margin-top:6px;
   }
   .group-card{
-    display:flex; align-items:center; gap:6px;
-    background:var(--panel2); border:1px solid var(--line); border-radius:10px;
-    padding:6px;
+    display:flex; align-items:center; gap:4px;
+    background:var(--panel2); border:1px solid var(--line); border-radius:8px;
+    padding:4px;
   }
   .group-card input{flex:1}
-  .group-card .btn{flex:0.3; font-size:12px;}
+  .group-card .btn{
+  flex:0 0 auto;      /* 按鈕不再吃掉彈性比例，大小跟內容走 */
+  font-size:16px;
+  padding:3px 6px;    /* 比全站其他 btn 再瘦一點點 */
+}
 
   /* missing stats list */
   .stats-list{display:flex; flex-direction:column; gap:6px;}
   .stat-row{
-    padding:8px; border:1px solid var(--line); border-radius:10px; font-size:13px;
+    padding:5px 6px; border:1px solid var(--line); border-radius:6px; font-size:13px;
     background:#0c1122; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     white-space: pre-line;
   }
@@ -487,6 +501,118 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
 .bw-dialog {
   pointer-events: auto;
 }
+  .page-tabs{
+    display:flex;
+    gap:6px;
+    margin-right:8px;
+  }
+  .page-btn{
+    min-width:46px;
+    height:56px;
+    padding:0 8px;
+    border-radius:8px;
+    background:var(--panel2);
+    border:1px solid var(--line);
+    font-size:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    white-space:nowrap;
+    opacity:.8;
+  }
+  .page-btn.active{
+    opacity:1;
+    outline:1px solid var(--accent);
+    box-shadow:0 0 0 1px rgba(122,252,255,.25);
+  }
+  .page-meta-row{
+    align-items:flex-end;
+  }
+  .page-meta-row .page-star{
+    flex:0 0 auto;
+    min-width:40px;
+    height:36px;
+    border-radius:10px;
+    font-size:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .page-meta-row .page-star.pin{
+    color:#ffd35c;
+  }
+  .page-meta-row .page-star.unpin{
+    color:#6b748f;
+  }
+  .stat-group{
+    padding:4px 6px;
+    border-radius:8px;
+    margin-bottom:4px;
+  }
+  .stat-group{
+  border-left:2px solid transparent;
+  padding-left:10px;
+  }
+  .stat-group.even{
+    border-color:rgba(120,255,200,0.35); /* 淺綠光縫 */
+  }
+
+  .stat-group.odd{
+    border-color:rgba(120,200,255,0.35); /* 淺藍光縫 */
+  }
+  .help-body{
+    max-height:50vh;
+    overflow-y:auto;
+    padding-right:4px;
+    font-size:13px;
+    line-height:1.6;
+  }
+  .help-section + .help-section{
+    margin-top:12px;
+    border-top:1px solid rgba(255,255,255,0.06);
+    padding-top:10px;
+  }
+  .help-section h4{
+    margin:0 0 4px 0;
+    font-size:13px;
+    color:var(--accent);
+  }
+  .help-checkbox{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    margin-top:10px;
+    font-size:13px;
+  }
+  .help-checkbox input{
+    width:16px;
+    height:16px;
+  }
+/* ===== 自訂捲軸：共用給 stats + help-body ===== */
+.help-body::-webkit-scrollbar,
+.stats-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.help-body::-webkit-scrollbar-track,
+.stats-list::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.05);
+  border-radius: 4px;
+}
+
+.help-body::-webkit-scrollbar-thumb,
+.stats-list::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.18);
+  border-radius: 4px;
+  transition: background 0.25s ease;
+}
+
+.help-body::-webkit-scrollbar-thumb:hover,
+.stats-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.28);
+}
+
+
 
 </style>
 </head>
@@ -495,57 +621,63 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
   <pre id="bootLines" class="boot-lines"></pre>
 </div>
 <div class="app">
-  <!-- 區塊1 -->
-  <div class="header">
-    <div id="title" class="title" contenteditable="true" data-placeholder="請輸入裝備種類"></div>
-    <button id="menuBtn" class="menu-btn" title="選單">☰</button>
-
+<!-- 區塊1 -->
+<div class="header">
+  <div id="title" class="title" contenteditable="true" data-placeholder="請輸入裝備種類"></div>
+  <!-- 🐍 平台轉移專用按鈕（只在本機/區網環境出現） -->
+  <button id="snakeBtn" class="menu-btn" title="載入平台轉移 JSON" style="display:none;">🐍</button>
+  <button id="helpBtn" class="menu-btn" title="使用說明">❓</button>
+  <button id="menuBtn" class="menu-btn" title="選單">☰</button>
     <!-- ◑ 選單 -->
     <div id="menuPop" class="menu-pop">
+      <div class="menu-item" data-action="pageMeta">
+        <div class="label">1. 多分頁設定</div><div class="tag">setting</div>
+      </div>
       <div class="menu-item" data-action="saveLS">
-        <div class="label">1. 儲存 localStorage</div><div class="tag">save</div>
+        <div class="label">2. 儲存 localStorage</div><div class="tag">save</div>
       </div>
       <div class="menu-item" data-action="exportJSON">
-        <div class="label">2. 匯出 JSON</div><div class="tag">export</div>
+        <div class="label">3. 匯出 JSON</div><div class="tag">export</div>
       </div>
       <div class="menu-item" data-action="importJSON">
-        <div class="label">3. 匯入 JSON</div><div class="tag">import</div>
+        <div class="label">4. 匯入 JSON</div><div class="tag">import</div>
       </div>
 
       <div class="divider"></div>
 
       <div class="menu-item" data-toggle="name">
-        <div class="label">4. 名稱</div><div class="toggle" id="tog-name"></div>
+        <div class="label">5. 名稱</div><div class="toggle" id="tog-name"></div>
       </div>
       <div class="menu-item" data-toggle="code">
-        <div class="label">5. 序號</div><div class="toggle" id="tog-code"></div>
+        <div class="label">6. 序號</div><div class="toggle" id="tog-code"></div>
       </div>
       <div class="menu-item" data-toggle="place">
-        <div class="label">6. 位置</div><div class="toggle" id="tog-place"></div>
+        <div class="label">7. 位置</div><div class="toggle" id="tog-place"></div>
       </div>
       <div class="menu-item" data-toggle="owner">
-        <div class="label">7. 持有人</div><div class="toggle" id="tog-owner"></div>
+        <div class="label">8. 持有人</div><div class="toggle" id="tog-owner"></div>
       </div>
       <div class="menu-item" data-toggle="status">
-        <div class="label">8. 狀態</div><div class="toggle" id="tog-status"></div>
+        <div class="label">9. 狀態</div><div class="toggle" id="tog-status"></div>
       </div>
       <div class="menu-item" data-toggle="note">
-        <div class="label">9. 狀況紀錄</div><div class="toggle" id="tog-note"></div>
+        <div class="label">10. 狀況紀錄</div><div class="toggle" id="tog-note"></div>
       </div>
       <div class="menu-item" data-toggle="disposal">
-        <div class="label">10. 處置狀況</div><div class="toggle" id="tog-disposal"></div>
+        <div class="label">11. 處置狀況</div><div class="toggle" id="tog-disposal"></div>
       </div>
 
       <div class="divider"></div>
 
       <div class="menu-item" data-action="exportDefects">
-        <div class="label">11. 匯出「缺失」到剪貼簿</div>
+        <div class="label">12. 匯出「缺失」到剪貼簿</div>
       </div>
       <div class="menu-item" data-action="exportStatus">
-        <div class="label">12. 匯出「現況」到剪貼簿</div>
+        <div class="label">13. 匯出「現況」到剪貼簿</div>
       </div>
-      <div class="menu-item danger" data-action="wipeAll">13. 刪除所有資料</div>
+      <div class="menu-item danger" data-action="wipeAll">14. 刪除所有資料</div>
     </div>
+
   </div>
 
   <!-- 區塊2 -->
@@ -561,6 +693,13 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
 
   <!-- 區塊4 -->
   <div class="bottombar">
+  <div class="page-tabs">
+      <button class="page-btn" data-page="1">P1</button>
+      <button class="page-btn" data-page="2">P2</button>
+      <button class="page-btn" data-page="3">P3</button>
+      <button class="page-btn" data-page="4">P4</button>
+      <button class="page-btn" data-page="5">P5</button>
+    </div>
     <button id="btnAdd" class="add-btn">＋</button>
   </div>
 </div>
@@ -574,11 +713,11 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
 <!-- 群組管理 modal -->
 <div id="groupModal" class="modal">
   <h3>群組集群管理</h3>
-  <div class="sub">上半=群組集群1，下半=群組集群2。名稱可改、可刪，索引 ID 永遠不變。</div>
+  <div class="sub">一個物件可同時設定兩個獨立的群組標籤，群組名稱可改、可刪。群組排序時會依照本頁面的順序做排序。</div>
 
   <div class="group-panel">
     <div class="row" style="align-items:center; justify-content:space-between;">
-      <div style="font-weight:800;">群組集群 1</div>
+      <div style="font-weight:800;">群組集群 A</div>
       <button class="btn" data-addgroup="1">新增一個群組</button>
     </div>
     <div id="groupList1" class="group-list"></div>
@@ -586,7 +725,7 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
 
   <div class="group-panel">
     <div class="row" style="align-items:center; justify-content:space-between;">
-      <div style="font-weight:800;">群組集群 2</div>
+      <div style="font-weight:800;">群組集群 B</div>
       <button class="btn" data-addgroup="2">新增一個群組</button>
     </div>
     <div id="groupList2" class="group-list"></div>
@@ -676,9 +815,130 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
   </div>
 </div>
 
+<!-- 多分頁設定 modal -->
+<div id="pageMetaModal" class="modal">
+  <h3>多分頁設定</h3>
+  <div class="sub">此處為 Page 切換按鈕的文字設定與預先載入 Page 設定區。</div>
+  <div class="page-meta-list">
+    <div class="row page-meta-row">
+      <div class="field">
+        <label>Page 1 名稱</label>
+        <input type="text" data-page-name="1" />
+      </div>
+      <button class="btn page-star" data-page-star="1">☆</button>
+    </div>
+    <div class="row page-meta-row">
+      <div class="field">
+        <label>Page 2 名稱</label>
+        <input type="text" data-page-name="2" />
+      </div>
+      <button class="btn page-star" data-page-star="2">☆</button>
+    </div>
+    <div class="row page-meta-row">
+      <div class="field">
+        <label>Page 3 名稱</label>
+        <input type="text" data-page-name="3" />
+      </div>
+      <button class="btn page-star" data-page-star="3">☆</button>
+    </div>
+    <div class="row page-meta-row">
+      <div class="field">
+        <label>Page 4 名稱</label>
+        <input type="text" data-page-name="4" />
+      </div>
+      <button class="btn page-star" data-page-star="4">☆</button>
+    </div>
+    <div class="row page-meta-row">
+      <div class="field">
+        <label>Page 5 名稱</label>
+        <input type="text" data-page-name="5" />
+      </div>
+      <button class="btn page-star" data-page-star="5">☆</button>
+    </div>
+  </div>
+  <div class="modal-actions">
+    <button class="btn" id="pageMetaExport">匯出設定檔</button>
+    <button class="btn" id="pageMetaImport">匯入設定檔</button>
+    <button class="btn good" id="pageMetaOk">關閉</button>
+  </div>
+</div>
+<!-- 使用說明 modal -->
+<div id="helpModal" class="modal">
+  <h3>使用說明</h3>
+  <div class="help-body">
+    <div class="help-section">
+      <h4>集群分類功能</h4>
+      <p>
+        本工具有兩個「群組集群」，可以讓每一個裝備同時掛上兩種分類。
+        例如：群組集群 1 分成「庫房 / 個人」，群組集群 2 分成「正常 / 堪用 / 損壞 / 進場」。
+        顯示時可以在排序 A / B 之間切換，用不同角度檢視同一批裝備。
+      </p>
+    </div>
+
+    <div class="help-section">
+      <h4>分頁功能（Page 1 ～ Page 5）</h4>
+      <p>
+        下方共有 5 個 Page 按鈕，每一頁都是獨立的資料集（各自一份 JSON）。
+        例如可以把「工地帽」、「衣櫃」、「電腦配件」分別放在不同 Page，互不影響。
+        「多分頁設定」中可以替每一頁改名字，並指定下次開啟時要預先載入哪一頁。
+      </p>
+    </div>
+
+    <div class="help-section">
+      <h4>缺失統計區＆剪貼簿匯出</h4>
+      <p>
+        缺失統計區會彙整所有尚未結案的缺失，依裝備序號分組顯示。
+        「匯出『缺失』到剪貼簿」與「匯出『現況』到剪貼簿」會依照目前顯示欄位，
+        輸出成簡單易貼的文字格式，方便貼到 LINE、Discord 或其他通訊軟體回報狀況。
+      </p>
+    </div>
+
+    <div class="help-section">
+      <h4>JSON 匯出 / 匯入</h4>
+      <p>
+        JSON 匯出會備份當前 Page 的所有資料；匯入則會覆蓋目前這一頁的內容。
+        建議定期將 JSON 存到雲端或備份的位置，以免裝置遺失或瀏覽器資料被清除時造成資料流失。
+      </p>
+    </div>
+
+    <div class="help-section">
+      <h4>瀏覽器環境小提醒</h4>
+      <p>
+        建議使用 Chrome、Safari、Firefox、Edge 等常規瀏覽器開啟本工具。
+        若是在 App 內建瀏覽器（例如 LINE 內建瀏覽器）中使用，JSON 檔案下載或匯出有可能受限制，
+        建議在檢查提醒後，改用「外部瀏覽器開啟」再使用本工具。
+      </p>
+    </div>
+  </div>
+
+  <label class="help-checkbox">
+    <input type="checkbox" id="helpDontShow">
+    <span>以後不再自動顯示這個說明視窗</span>
+  </label>
+
+  <div class="modal-actions">
+    <button class="btn good" id="helpClose">關閉</button>
+  </div>
+</div>
+    <!-- 平台轉移 JSON 載入工具 -->
+    <div id="transferModal" class="modal">
+      <h3>平台轉移載入工具</h3>
+      <div class="sub">
+        會從 <code>本機內部轉移專用json區</code> 嘗試讀取六個 JSON 檔，載入到對應 Page 的 localStorage。
+      </div>
+      <div id="transferCheckList" class="stats-list">
+        <!-- 這裡會動態塞「檢查中 / ✔️ / ❌」 -->
+      </div>
+      <div class="modal-actions">
+        <button class="btn" id="transferCancelBtn">取消</button>
+        <button class="btn good" id="transferApplyBtn">開始載入</button>
+      </div>
+    </div>
+
 <script>
 (() => {
-  const LS_KEY = "equip_planner_v1";
+  const LS_KEY_BASE = "equip_planner_v1";
+  const LS_META_KEY = LS_KEY_BASE + "_Meta";
 
   const $ = sel => document.querySelector(sel);
   const main = $("#main");
@@ -692,6 +952,8 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
   const groupModal = $("#groupModal");
   const itemModal = $("#itemModal");
   const statsModal = $("#statsModal");
+  const pageMetaModal = $("#pageMetaModal");
+  const helpModal = $("#helpModal");
 
   const btnGroups = $("#btnGroups");
   const btnSortA = $("#btnSortA");
@@ -699,6 +961,8 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
   const btnStats  = $("#btnStats");
   const btnAdd    = $("#btnAdd");
   const btnItemDelete = $("#itemDelete");
+
+  const pageButtons = Array.from(document.querySelectorAll(".page-btn"));
 
   // item form fields
   const fGroup1 = $("#fGroup1");
@@ -728,6 +992,11 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
   let state = defaultState();
   let editingItemId = null;
 
+  // ---- 多分頁 Meta ----
+  let meta = loadMeta();
+  let currentPage = normalizePage(meta.startPage || 1);
+  let currentKey  = getPageKey(currentPage);
+
   function defaultState(){
     return {
       title: "請輸入裝備種類",
@@ -754,14 +1023,93 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
     return prefix + "_" + Math.random().toString(36).slice(2,9) + Date.now().toString(36).slice(-4);
   }
 
-  /* ---------- storage ---------- */
+  // ===== 平台轉移用環境偵測 =====
+  function isLocalTransferEnv(){
+    const proto = location.protocol;
+    if(proto === "file:") return false;            // file 模式關掉
+    if(proto !== "http:" && proto !== "https:") return false;
+
+    const host = location.hostname || "";
+
+    // 視為本機 / 區網環境的條件
+    const isLocalHost = host === "localhost" || host === "127.0.0.1";
+    const isLan =
+      /^192\.168\./.test(host) ||
+      /^10\./.test(host) ||
+      /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(host);
+
+    // 明確排除 github.io 這類公開網域
+    const isPublic = /github\.io$/i.test(host);
+
+    return (isLocalHost || isLan) && !isPublic;
+  }
+  window.isLocalTransferEnv = isLocalTransferEnv;
+
+  function setupSnakeButton(){
+    const btn = $("#snakeBtn");
+    if(!btn) return;
+    if(!isLocalTransferEnv()){
+      btn.style.display = "none";
+      return;
+    }
+    btn.style.display = "grid";   // 跟其他 menu-btn 一樣的 layout
+    btn.addEventListener("click", openTransferModal);
+  }
+// ★ 一樣丟到全域
+window.setupSnakeButton = setupSnakeButton;
+
+  // ---------- 多分頁 / Meta helpers ----------
+  function normalizePage(p){
+    const n = Number(p) || 1;
+    return (n < 1 || n > 5) ? 1 : n;
+  }
+
+  function getPageKey(page){
+    page = normalizePage(page);
+    return page === 1 ? LS_KEY_BASE : `${LS_KEY_BASE}_${page}`;
+  }
+
+  function defaultMeta(){
+    return {
+      startPage: 1,
+      pageNames: {1:"",2:"",3:"",4:"",5:""},
+      showHelpOnStart: true   // ✅ 預設會自動顯示說明
+    };
+  }
+
+  function loadMeta(){
+    try{
+      const raw = localStorage.getItem(LS_META_KEY);
+      if(!raw) return defaultMeta();
+      const data = JSON.parse(raw);
+      const base = defaultMeta();
+      return {
+        startPage: normalizePage(data.startPage ?? base.startPage),
+        pageNames: {...base.pageNames, ...(data.pageNames || {})},
+        showHelpOnStart: (typeof data.showHelpOnStart === "boolean"
+          ? data.showHelpOnStart
+          : base.showHelpOnStart)
+      };
+    }catch(e){
+      console.warn("meta parse error", e);
+      return defaultMeta();
+    }
+  }
+
+
+  function saveMeta(){
+    localStorage.setItem(LS_META_KEY, JSON.stringify(meta));
+  }
+
+
+    /* ---------- storage ---------- */
   function saveLocal(){
     state.title = getTitle();
-    localStorage.setItem(LS_KEY, JSON.stringify(state));
+    localStorage.setItem(currentKey, JSON.stringify(state));
     toast("已儲存 localStorage");
   }
   function loadLocal(){
-    const raw = localStorage.getItem(LS_KEY);
+    const raw = localStorage.getItem(currentKey);
     if(!raw) return false;
     try{
       const data = JSON.parse(raw);
@@ -769,20 +1117,6 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
       return true;
     }catch(e){ console.warn(e); }
     return false;
-  }
-
-  /* ---------- silent auto json load (same basename) ---------- */
-  async function silentAutoLoadJson(){
-    try{
-      const path = location.pathname.split("/").pop() || "";
-      const base = path.replace(/\.[^.]+$/,"") || "裝備規劃表";
-      const url = `./${base}.json`;
-      const res = await fetch(url, {cache:"no-store"});
-      if(!res.ok) return;
-      const data = await res.json();
-      applyImportedData(data);
-      toast("已自動載入同名 JSON");
-    }catch(_){ /* silent */ }
   }
 
   function exportJSON(){
@@ -835,6 +1169,123 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
     render();
   }
 
+// ===== 平台轉移 JSON 載入邏輯 =====
+
+// 固定路徑與檔名
+const TRANSFER_BASE = "91-Json區/平台轉移用json/";
+
+const TRANSFER_FILES = [
+  { key: "meta",  label: "裝備規劃MetaSet.json", path: TRANSFER_BASE + "裝備規劃MetaSet.json" },
+  { key: "p1",    label: "EquipmentMangerP01.json", path: TRANSFER_BASE + "EquipmentMangerP01.json" },
+  { key: "p2",    label: "EquipmentMangerP02.json", path: TRANSFER_BASE + "EquipmentMangerP02.json" },
+  { key: "p3",    label: "EquipmentMangerP03.json", path: TRANSFER_BASE + "EquipmentMangerP03.json" },
+  { key: "p4",    label: "EquipmentMangerP04.json", path: TRANSFER_BASE + "EquipmentMangerP04.json" },
+  { key: "p5",    label: "EquipmentMangerP05.json", path: TRANSFER_BASE + "EquipmentMangerP05.json" }
+];
+
+// 這裡暫存每個檔案實際抓到的 raw text
+let transferCache = {};
+let transferHasAny = false;
+
+const transferModal = document.getElementById("transferModal");
+const transferList  = document.getElementById("transferCheckList");
+const transferCancelBtn = document.getElementById("transferCancelBtn");
+const transferApplyBtn  = document.getElementById("transferApplyBtn");
+
+// 這裡就直接綁，不要再多一層 initXXX
+if (transferCancelBtn) {
+  transferCancelBtn.addEventListener("click", () => hideModal(transferModal));
+}
+if (transferApplyBtn) {
+  transferApplyBtn.addEventListener("click", applyTransferJson);
+}
+
+
+
+
+// 開啟蛇蛇工具 modal
+function openTransferModal(){
+  if(!transferModal) return;
+
+  transferCache = {};
+  transferHasAny = false;
+  transferList.innerHTML = "";
+
+  // 先把每一行預放進去「檢查中」
+  TRANSFER_FILES.forEach(file => {
+    const row = document.createElement("div");
+    row.className = "stat-row";
+    row.dataset.key = file.key;
+    row.textContent = `${file.label} …… 檢查中`;
+    transferList.appendChild(row);
+  });
+
+  // 顯示 modal
+  showModal(transferModal);
+
+  // 開始逐一檢查檔案是否存在
+  TRANSFER_FILES.forEach(file => {
+    checkTransferFile(file);
+  });
+}
+
+// 實際用 fetch 檢查 + 讀取 JSON 文字
+async function checkTransferFile(file){
+  const row = [...transferList.children].find(el => el.dataset.key === file.key);
+  if(!row) return;
+
+  try{
+    const resp = await fetch(file.path, { method: "GET", cache: "no-store" });
+    if(!resp.ok){
+      row.textContent = `${file.label} ❌（找不到檔案）`;
+      return;
+    }
+    const text = await resp.text();
+    transferCache[file.key] = text;
+    transferHasAny = true;
+    row.textContent = `${file.label} ✔️`;
+  }catch(e){
+    row.textContent = `${file.label} ❌（讀取失敗）`;
+    console.warn("[transfer] 讀取失敗：", file.path, e);
+  }
+}
+
+// 實際把資料寫進 localStorage，然後重新整理
+function applyTransferJson(){
+  if(!transferHasAny){
+    alert("在指定資料夾中沒有找到任何可載入的 JSON 檔。");
+    return;
+  }
+
+  if(!confirm("確認要將找到的 JSON 載入到本工具？這會覆蓋目前 localStorage 中對應 Page 的資料。")){
+    return;
+  }
+
+  try{
+    // 1. Meta
+    if(transferCache.meta){
+      localStorage.setItem(LS_META_KEY, transferCache.meta);
+    }
+
+    // 2. 各 Page：用 getPageKey，跟現有架構對齊
+    for(let i = 1; i <= 5; i++){
+      const raw = transferCache["p" + i];
+      if(!raw) continue;
+      const pageKey = getPageKey(i);        // ★ 這行改掉
+      localStorage.setItem(pageKey, raw);
+    }
+
+    hideModal(transferModal);
+    toast("平台轉移 JSON 已載入，重新整理後生效");
+    location.reload();
+  }catch(e){
+    console.error("[transfer] 寫入失敗", e);
+    alert("寫入 localStorage 時發生錯誤，請打開主控台查看錯誤訊息。");
+  }
+}
+
+
+
   /* ---------- title ---------- */
   function getTitle(){
     const t = titleEl.textContent.trim();
@@ -872,6 +1323,7 @@ document.addEventListener("click", (e) => {
     const act = item.dataset.action;
     const tog = item.dataset.toggle;
     if(act){
+      if(act==="pageMeta") { openPageMetaModal(); return; }
       if(act==="saveLS") saveLocal();
       if(act==="exportJSON") exportJSON();
       if(act==="importJSON") importJSON();
@@ -880,6 +1332,7 @@ document.addEventListener("click", (e) => {
       if(act==="wipeAll") wipeAllData();
       return;
     }
+
     if(tog){
       state.fieldVisibility[tog] = !state.fieldVisibility[tog];
       updateToggles();
@@ -917,6 +1370,46 @@ document.addEventListener("click", (e) => {
   btnStats.addEventListener("click", () => openStatsModal());
   btnAdd.addEventListener("click", () => openItemModal(null));
 
+  // 底部 Page 切換
+  pageButtons.forEach(btn=>{
+    const page = Number(btn.dataset.page);
+    btn.addEventListener("click", ()=>{
+      switchPage(page);
+    });
+  });
+
+  function switchPage(page){
+    page = normalizePage(page);
+    if(page === currentPage) return;
+
+    // 先把原本 page 的資料存回原 key
+    saveLocal();
+
+    currentPage = page;
+    currentKey  = getPageKey(currentPage);
+
+    const has = loadLocal();
+    if(!has){
+      // 沒資料，用新 state
+      state = defaultState();
+      setTitle(state.title);
+      updateToggles();
+      updateSortButtons();
+    }
+    updatePageButtons();
+    render();
+  }
+
+  function updatePageButtons(){
+    pageButtons.forEach(btn=>{
+      const p = Number(btn.dataset.page);
+      const name = (meta.pageNames && meta.pageNames[p] || "").trim();
+      btn.textContent = name || `P${p}`;
+      btn.classList.toggle("active", p === currentPage);
+    });
+  }
+
+
   /* ---------- render main ---------- */
   function render(){
     main.innerHTML = "";
@@ -938,9 +1431,6 @@ document.addEventListener("click", (e) => {
       if(gid==="__ungrouped__" || !idsSet.has(gid)) hasUngrouped = true;
     }
 
-    // sort groups by name
-    clusterGroups.sort((a,b)=> a.name.localeCompare(b.name, ["zh-Hant","ja","en"], {numeric:true}));
-
     // create ordered list of group objects + ungrouped at end
     const ordered = clusterGroups.map(g => ({...g, _gid:g.id}));
     if(hasUngrouped){
@@ -960,12 +1450,8 @@ document.addEventListener("click", (e) => {
       if(items.length===0) continue;
 
       // sort items: pinned first then order
-      items.sort((a,b)=>{
-        if(!!a.pinned !== !!b.pinned) return a.pinned ? -1 : 1;
-        const ao = serialNum(a);
-        const bo = serialNum(b);
-        return ao - bo;
-      });
+      // sort items: 使用新的 compareItems
+      items.sort(compareItems);
 
       const groupEl = document.createElement("div");
       groupEl.className = "group";
@@ -1098,28 +1584,58 @@ document.addEventListener("click", (e) => {
     list1.innerHTML = "";
     list2.innerHTML = "";
 
-    [1,2].forEach(cid=>{
-      const list = cid===1?list1:list2;
-      state.clusters[cid].forEach(g=>{
-        const card = document.createElement("div");
-        card.className="group-card";
-        const inp = document.createElement("input");
-        inp.value = g.name;
-        inp.addEventListener("input", ()=> g.name = inp.value);
-        const del = document.createElement("button");
-        del.className="btn danger";
-        del.textContent="刪除";
-        del.addEventListener("click", ()=>{
-          if(confirm("刪除此群組？（不會刪裝備，只會變成未分類）")){
-            state.clusters[cid] = state.clusters[cid].filter(x=>x.id!==g.id);
-            renderGroupLists();
-          }
-        });
-        card.appendChild(inp);
-        card.appendChild(del);
-        list.appendChild(card);
-      });
+  [1,2].forEach(cid=>{
+  const list   = cid===1 ? list1 : list2;
+  const groups = state.clusters[cid];
+
+  list.innerHTML = "";
+
+  groups.forEach((g, index)=>{
+    const card = document.createElement("div");
+    card.className = "group-card";
+
+    const inp = document.createElement("input");
+    inp.value = g.name;
+    inp.addEventListener("input", ()=> g.name = inp.value);
+
+    // 上移
+    const upBtn = document.createElement("button");
+    upBtn.className = "btn";
+    upBtn.textContent = "↑";
+    upBtn.addEventListener("click", ()=>{
+      if(index <= 0) return;
+      [groups[index-1], groups[index]] = [groups[index], groups[index-1]];
+      renderGroupLists();
     });
+
+    // 下移
+    const downBtn = document.createElement("button");
+    downBtn.className = "btn";
+    downBtn.textContent = "↓";
+    downBtn.addEventListener("click", ()=>{
+      if(index >= groups.length-1) return;
+      [groups[index], groups[index+1]] = [groups[index+1], groups[index]];
+      renderGroupLists();
+    });
+
+    // 刪除
+    const del = document.createElement("button");
+    del.className="btn danger";
+    del.textContent="刪除";
+    del.addEventListener("click", ()=>{
+      if(confirm("刪除此群組？（不會刪裝備，只會變成未分類）")){
+        state.clusters[cid] = state.clusters[cid].filter(x=>x.id!==g.id);
+        renderGroupLists();
+      }
+    });
+
+    card.appendChild(inp);
+    card.appendChild(upBtn);
+    card.appendChild(downBtn);
+    card.appendChild(del);
+    list.appendChild(card);
+  });
+});
   }
 
   groupModal.addEventListener("click", (e)=>{
@@ -1354,26 +1870,52 @@ btnItemDelete.addEventListener("click", ()=>{
     render();
   });
 
-  /* ---------- stats modal ---------- */
-  function openStatsModal(){
-    const list = $("#statsList");
-    list.innerHTML = "";
-    const rows = collectOpenDefects();
-    if(!rows.length){
-      list.innerHTML = `<div style="padding:12px;color:var(--muted);text-align:center;">目前沒有未結案缺失。</div>`;
-    }else{
-        rows.forEach(r=>{
-        const div=document.createElement("div");
-        div.className="stat-row " + disposalClass(r.disposal);
-        div.textContent = 
+/* ---------- stats modal ---------- */
+function openStatsModal(){
+  const list = $("#statsList");
+  list.innerHTML = "";
+  const rows = collectOpenDefects();
+
+  if(!rows.length){
+    list.innerHTML = `<div style="padding:12px;color:var(--muted);text-align:center;">目前沒有未結案缺失。</div>`;
+  } else {
+    // 依「名稱+序號」分組（同一裝備的一坨缺失放一起）
+    const groups = [];
+    const map = new Map(); // key => group
+
+    rows.forEach(r=>{
+      const key = `${r.name}||${r.code}`; // 只要同 name+code 就視為同一組
+      let g = map.get(key);
+      if(!g){
+        g = { key, rows: [] };
+        map.set(key, g);
+        groups.push(g);
+      }
+      g.rows.push(r);
+    });
+
+    // 逐組渲染，組與組之間交錯底色
+    groups.forEach((g, idx)=>{
+      const groupDiv = document.createElement("div");
+      groupDiv.className = "stat-group " + (idx % 2 === 0 ? "even" : "odd");
+
+      g.rows.forEach(r=>{
+        const div = document.createElement("div");
+        div.className = "stat-row " + disposalClass(r.disposal);
+        div.textContent =
           `${r.name}-${r.code}-${r.desc}\n` +
-          `${r.disposal}-${r.part}${r.qty?("×"+r.qty):""}`;
-        list.appendChild(div);
+          `${r.disposal}-${r.part}${r.qty ? ("×" + r.qty) : ""}`;
+        groupDiv.appendChild(div);
       });
-    }
-    showModal(statsModal);
+
+      list.appendChild(groupDiv);
+    });
   }
-  $("#statsClose").addEventListener("click", ()=>hideModal(statsModal));
+
+  showModal(statsModal);
+}
+$("#statsClose").addEventListener("click", ()=>hideModal(statsModal));
+
 
 function collectOpenDefects(){
   const out=[];
@@ -1400,6 +1942,132 @@ function collectOpenDefects(){
     }
   }
 
+  /* ---------- page meta modal ---------- */
+  function openPageMetaModal(){
+    // 填入名稱
+    document.querySelectorAll("[data-page-name]").forEach(inp=>{
+      const p = Number(inp.dataset.pageName);
+      inp.value = (meta.pageNames && meta.pageNames[p]) || "";
+    });
+    updatePageMetaStars();
+    showModal(pageMetaModal);
+  }
+
+  function updatePageMetaStars(){
+    document.querySelectorAll("[data-page-star]").forEach(btn=>{
+      const p = Number(btn.dataset.pageStar);
+      const on = normalizePage(meta.startPage || 1) === p;
+      btn.textContent = on ? "★" : "☆";
+      btn.classList.toggle("pin", on);
+      btn.classList.toggle("unpin", !on);
+    });
+  }
+
+  // 名稱輸入 → 寫回 meta + 更新底部按鈕
+  document.querySelectorAll("[data-page-name]").forEach(inp=>{
+    inp.addEventListener("input", ()=>{
+      const p = Number(inp.dataset.pageName);
+      meta.pageNames[p] = inp.value;
+      saveMeta();
+      updatePageButtons();
+    });
+  });
+
+  // 星星 → 設定預設載入 Page（只是 Meta，不切換當前畫面）
+  document.querySelectorAll("[data-page-star]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const p = Number(btn.dataset.pageStar);
+      meta.startPage = normalizePage(p);
+      saveMeta();
+      updatePageMetaStars();
+      toast(`下次開啟會預先載入 Page${p}`);
+    });
+  });
+
+  // 匯出設定檔（提醒 + 下載 meta json）
+  $("#pageMetaExport").addEventListener("click", ()=>{
+    alert("本功能主要用於使用者將轉移資料到不同載體時使用（如換新手機），而非交接局部頁面的資料給他人。");
+    const filename = "裝備規劃MetaSet.json";
+    const blob = new Blob([JSON.stringify(meta, null, 2)], {type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  });
+  // 匯入設定檔
+  $("#pageMetaImport").addEventListener("click", ()=>{
+    // 提醒用途
+    alert("請選擇先前匯出的多分頁設定檔。\n只會覆蓋 Page 名稱與預設頁面，裝備資料本身不會被更動。");
+
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "application/json,.json";
+    input.style.display = "none";
+    document.body.appendChild(input);
+
+    input.addEventListener("change", ()=>{
+      const file = input.files[0];
+      if(!file){
+        input.remove();
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = e=>{
+        input.remove();
+        try{
+          const data = JSON.parse(e.target.result);
+
+          if(!data || typeof data !== "object"){
+            alert("檔案格式不正確，無法載入設定。");
+            return;
+          }
+
+          // 只吃我們需要的欄位，其他全部忽略
+          const base = defaultMeta();
+          const next = {
+            startPage: base.startPage,
+            pageNames: {...base.pageNames}
+          };
+
+          if(typeof data.startPage !== "undefined"){
+            next.startPage = normalizePage(data.startPage);
+          }
+          if(data.pageNames && typeof data.pageNames === "object"){
+            next.pageNames = {...next.pageNames, ...data.pageNames};
+          }
+
+          meta = next;
+          saveMeta();
+          // 🔄 重新刷新「多分頁設定」視窗內的 input 顯示
+          document.querySelectorAll("[data-page-name]").forEach(inp=>{
+            const p = Number(inp.dataset.pageName);
+            inp.value = (meta.pageNames && meta.pageNames[p]) || "";
+          });
+
+          updatePageButtons();    // 更新底部 P1~P5 顯示
+          updatePageMetaStars();  // 更新星星狀態
+          toast("已匯入多分頁設定");
+          updatePageButtons();    // 更新底部 P1~P5 顯示
+          updatePageMetaStars();  // 更新星星狀態
+          toast("已匯入多分頁設定");
+        }catch(err){
+          console.error(err);
+          alert("讀取設定檔時發生錯誤，請確認檔案內容是否正確。");
+        }
+      };
+      reader.readAsText(file, "utf-8");
+    }, { once:true });
+
+    input.click();
+  });
+
+  $("#pageMetaOk").addEventListener("click", ()=>{
+    hideModal(pageMetaModal);
+  });
+
+
   /* ---------- export to clipboard ---------- */
  async function exportDefectsToClipboard(){
   const rows = collectOpenDefects();
@@ -1414,11 +2082,34 @@ function collectOpenDefects(){
   async function exportStatusToClipboard(){
     alert("會根據當前顯示欄位匯出資料");
     const clusterId = state.activeCluster;
-    const groups = [...state.clusters[clusterId]]
-      .sort((a,b)=>a.name.localeCompare(b.name, ["zh-Hant","ja","en"], {numeric:true}));
+    // 匯出時也依照群組管理中的順序
+    const groups = [...state.clusters[clusterId]];
 
-    const lines=[];
-    const visMid = ["name","code","place","owner"].filter(k=>state.fieldVisibility[k]);
+    const lines = [];
+
+    // 中段欄位，依照顯示開關決定要不要匯出
+    const visMid = ["name","code","place","owner"].filter(k => state.fieldVisibility[k]);
+    // 狀態欄也改成受開關控制
+    const includeStatus = !!state.fieldVisibility.status;
+
+    // 狀態 → emoji 對照
+    function statusToEmoji(status){
+      if (!status) return "";
+      switch(status){
+        case "正常": return "✅";
+        case "堪用": return "⚠️";
+        case "損壞": return "🚫";
+        case "進場": return "🚑";
+        case "其他": return "🧾";
+      }
+      // 兼容舊資料可能是英文的情況
+      const s = String(status).toLowerCase();
+      if (s === "normal") return "✅";
+      if (s === "usable") return "⚠️";
+      if (s === "broken") return "🚫";
+      if (s === "repair" || s === "inshop" || s === "service") return "🚑";
+      return status; // 不認得就原樣輸出
+    }
 
     const mapItemsByGroup = new Map();
     for(const it of state.items){
@@ -1426,11 +2117,13 @@ function collectOpenDefects(){
       if(!mapItemsByGroup.has(gid)) mapItemsByGroup.set(gid, []);
       mapItemsByGroup.get(gid).push(it);
     }
+
     const idsSet = new Set(groups.map(g=>g.id));
-    let hasUngrouped=false;
+    let hasUngrouped = false;
     for(const [gid] of mapItemsByGroup){
-      if(gid==="__ungrouped__" || !idsSet.has(gid)) {hasUngrouped=true; break;}
+      if(gid==="__ungrouped__" || !idsSet.has(gid)) { hasUngrouped = true; break; }
     }
+
     const ordered = groups.map(g=>({...g, _gid:g.id}));
     if(hasUngrouped) ordered.push({id:"__ungrouped__", name:"未分類", _gid:"__ungrouped__"});
 
@@ -1444,24 +2137,25 @@ function collectOpenDefects(){
         return true;
       });
       if(!arr.length) continue;
-      arr.sort((a,b)=>{
-        if(!!a.pinned !== !!b.pinned) return a.pinned ? -1 : 1;
-        const ao = serialNum(a);
-        const bo = serialNum(b);
-        return ao - bo;
-      });
+      arr.sort(compareItems);
 
       lines.push(`群組：${g.name}`);
       arr.forEach((it, idx)=>{
         const seq = String(idx+1).padStart(2,"0");
-        const parts=[seq];
+        const parts = [seq];
+
         visMid.forEach(k=>{
           const v = (k==="name"?it.name:
                      k==="code"?it.code:
-                     k==="place"?it.place:it.owner) || "";
+                     k==="place"?it.place:
+                     it.owner) || "";
           parts.push(v);
         });
-        parts.push(it.status||"");
+
+        if (includeStatus){
+          parts.push(statusToEmoji(it.status));
+        }
+
         lines.push(parts.join("-"));
       });
       lines.push(""); // blank line between groups
@@ -1470,6 +2164,7 @@ function collectOpenDefects(){
     await copyText(lines.join("\n").trim());
     toast("現況已複製到剪貼簿");
   }
+
 
   async function copyText(text){
     try{
@@ -1493,9 +2188,52 @@ function collectOpenDefects(){
     overlay.classList.remove("show");
   }
   overlay.addEventListener("click", ()=>{
-    [groupModal,itemModal,statsModal].forEach(m=>m.classList.remove("show"));
+    [groupModal,itemModal,statsModal,pageMetaModal,helpModal].forEach(m=>m.classList.remove("show"));
     overlay.classList.remove("show");
   });
+
+
+  
+  /* ---------- 使用說明 modal ---------- */
+  function openHelpModal(){
+    const cb = $("#helpDontShow");
+    if (cb){
+      // meta.showHelpOnStart = true → checkbox 未勾選
+      cb.checked = !meta.showHelpOnStart;
+    }
+    showModal(helpModal);
+  }
+
+  function maybeShowHelpOnStart(){
+    if (!meta.showHelpOnStart) return;
+    openHelpModal();
+  }
+
+  // 讓外部的瀏覽器檢測程式可以在環境 ok 後呼叫
+  window.maybeShowHelpOnStart = maybeShowHelpOnStart;
+
+  if (helpBtn){
+    helpBtn.addEventListener("click", ()=>{
+      openHelpModal();
+    });
+  }
+
+  const helpCloseBtn = $("#helpClose");
+  if (helpCloseBtn){
+    helpCloseBtn.addEventListener("click", ()=>{
+      hideModal(helpModal);
+    });
+  }
+
+  const helpDontShow = $("#helpDontShow");
+  if (helpDontShow){
+    helpDontShow.addEventListener("change", (e)=>{
+      // 勾選 = 以後不再自動顯示
+      meta.showHelpOnStart = !e.target.checked;
+      saveMeta();
+    });
+  }
+
 
   /* ---------- long press delete ---------- */
   function attachLongPressDelete(el, onLong){
@@ -1530,9 +2268,37 @@ function collectOpenDefects(){
     setTimeout(()=>{ d.style.opacity=0; setTimeout(()=>d.remove(),250); }, 1200);
   }
   
-  function serialNum(it){
-    const n = Number(it.code);
-    return Number.isFinite(n) ? n : Infinity;
+  function compareItems(a, b){
+    // 1) 釘選優先
+    if(!!a.pinned !== !!b.pinned){
+      return a.pinned ? -1 : 1;
+    }
+  
+    const codeA = (a.code || "").trim();
+    const codeB = (b.code || "").trim();
+  
+    // 2) 有序號的排在沒序號前面
+    if(codeA && !codeB) return -1;
+    if(!codeA && codeB) return 1;
+  
+    // 3) 雙方都有序號 → 先用 localeCompare(numeric:true)
+    if(codeA && codeB){
+      const cmpCode = codeA.localeCompare(
+        codeB,
+        ["zh-Hant","ja","en"],
+        { numeric: true, sensitivity: "base" }
+      );
+      if(cmpCode !== 0) return cmpCode;
+    }
+  
+    // 4) 序號都空／或同一串 → 用名稱當第二排序鍵
+    const nameA = (a.name || "");
+    const nameB = (b.name || "");
+    return nameA.localeCompare(
+      nameB,
+      ["zh-Hant","ja","en"],
+      { numeric:true, sensitivity:"base" }
+    );
   }
 
   function wipeAllData(){
@@ -1548,16 +2314,15 @@ function collectOpenDefects(){
     }
 
   /* ---------- init ---------- */
-  updateToggles();
   const hasLS = loadLocal();
   if(!hasLS){
     setTitle(state.title);
   }
+  updateToggles();
   updateSortButtons();
+  updatePageButtons();
   render();
-  silentAutoLoadJson(); // 靜默嘗試同名 json
 
-})();
 
 // ---------- 裝逼開機畫面 ----------
   const bootLinesEl = document.getElementById("bootLines");
@@ -1682,15 +2447,16 @@ function initBrowserWarning() {
   const overlay = document.getElementById("browser-warning-overlay");
   const confirmBtn = document.getElementById("bw-confirm-btn");
 
-  if (!overlay || !confirmBtn) return;
-
-  // 綁定關閉按鈕
-  confirmBtn.addEventListener("click", () => {
-    overlay.classList.add("bw-hidden");
-  });
-
-  // 不提供「點背景就關閉」，所以這裡不綁 overlay click 關閉
-  // 只要判斷完再決定要不要顯示即可
+  // 綁定關閉按鈕（如果這個 modal 存在）
+  if (overlay && confirmBtn) {
+    confirmBtn.addEventListener("click", () => {
+      overlay.classList.add("bw-hidden");
+      // 合法環境提醒結束後，再進入使用說明（若尚未關閉自動顯示）
+      if (window.maybeShowHelpOnStart) {
+        window.maybeShowHelpOnStart();
+      }
+    });
+  }
 
   if (runtime.isInAppBrowser) {
     // 已知 in-app → 顯示強警告
@@ -1698,12 +2464,31 @@ function initBrowserWarning() {
   } else if (!runtime.isKnownStandalone) {
     // 非主流瀏覽器 → 一般級提醒
     showBrowserWarning("unknown", runtime);
+  } else {
+    // 主流瀏覽器 → 直接放行，然後進入說明視窗邏輯
+    if (window.maybeShowHelpOnStart) {
+      window.maybeShowHelpOnStart();
+    }
   }
-  // 主流瀏覽器 → 安靜放行
+  document.addEventListener("DOMContentLoaded", () => {
+  showBrowserWarning();   // 原本的
+ 
+  setupSnakeButton();     // ← 你實際有定義的
+});
 }
 
-document.addEventListener("DOMContentLoaded", initBrowserWarning);
+
+
+})();
+document.addEventListener("DOMContentLoaded", () => {
+  setupSnakeButton();  // ← 這行是重點
+});
+
+
+document.title = location.pathname.split('/').pop().replace(/\.[^/.]+$/, '');
+
 </script>
+
 <!-- Browser Warning Modal -->
 <div id="browser-warning-overlay" class="bw-overlay bw-hidden">
   <div class="bw-dialog">
