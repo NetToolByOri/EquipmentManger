@@ -59,7 +59,7 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
     border:1px solid var(--line); border-radius:12px;
     position:sticky;
     top:0;
-    z-index:20;
+    z-index:300;
 }
   .title{
     flex:1; min-height:34px; line-height:1.2;
@@ -80,8 +80,12 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
     position:absolute; right:6px; top:54px; width:min(320px, 92vw);
     background:var(--panel); border:1px solid var(--line); border-radius:12px;
     box-shadow:var(--shadow);
-    padding:8px; display:none; z-index:30;
-  }
+    padding:8px; display:none; z-index:9000;
+  max-height: calc(100dvh - 80px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
   .menu-pop.show{display:block;}
   .menu-item{
     display:flex; align-items:center; justify-content:space-between;
