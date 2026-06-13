@@ -505,6 +505,21 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
     display:flex;
     gap:6px;
     margin-right:8px;
+    flex:1;
+    min-width:0;
+    overflow-x:auto;
+    overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    cursor:grab;
+    user-select:none;
+    touch-action:pan-x;
+  }
+  .page-tabs::-webkit-scrollbar{
+    display:none;
+  }
+  .page-tabs.dragging{
+    cursor:grabbing;
   }
   .page-btn{
     min-width:46px;
@@ -645,37 +660,44 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
 
       <div class="divider"></div>
 
+      <div class="menu-item" data-toggle="seq">
+        <div class="label">5. 編號</div><div class="toggle" id="tog-seq"></div>
+      </div>
+      <div class="menu-item" data-toggle="pin">
+        <div class="label">6. 星號</div><div class="toggle" id="tog-pin"></div>
+      </div>
+
       <div class="menu-item" data-toggle="name">
-        <div class="label">5. 名稱</div><div class="toggle" id="tog-name"></div>
+        <div class="label">7. 名稱</div><div class="toggle" id="tog-name"></div>
       </div>
       <div class="menu-item" data-toggle="code">
-        <div class="label">6. 序號</div><div class="toggle" id="tog-code"></div>
+        <div class="label">8. 序號</div><div class="toggle" id="tog-code"></div>
       </div>
       <div class="menu-item" data-toggle="place">
-        <div class="label">7. 位置</div><div class="toggle" id="tog-place"></div>
+        <div class="label">9. 位置</div><div class="toggle" id="tog-place"></div>
       </div>
       <div class="menu-item" data-toggle="owner">
-        <div class="label">8. 持有人</div><div class="toggle" id="tog-owner"></div>
+        <div class="label">10. 持有人</div><div class="toggle" id="tog-owner"></div>
       </div>
       <div class="menu-item" data-toggle="status">
-        <div class="label">9. 狀態</div><div class="toggle" id="tog-status"></div>
+        <div class="label">11. 狀態</div><div class="toggle" id="tog-status"></div>
       </div>
       <div class="menu-item" data-toggle="note">
-        <div class="label">10. 狀況紀錄</div><div class="toggle" id="tog-note"></div>
+        <div class="label">12. 狀況紀錄</div><div class="toggle" id="tog-note"></div>
       </div>
       <div class="menu-item" data-toggle="disposal">
-        <div class="label">11. 處置狀況</div><div class="toggle" id="tog-disposal"></div>
+        <div class="label">13. 處置狀況</div><div class="toggle" id="tog-disposal"></div>
       </div>
 
       <div class="divider"></div>
 
       <div class="menu-item" data-action="exportDefects">
-        <div class="label">12. 匯出「缺失」到剪貼簿</div>
+        <div class="label">14. 匯出「缺失」到剪貼簿</div>
       </div>
       <div class="menu-item" data-action="exportStatus">
-        <div class="label">13. 匯出「現況」到剪貼簿</div>
+        <div class="label">15. 匯出「現況」到剪貼簿</div>
       </div>
-      <div class="menu-item danger" data-action="wipeAll">14. 刪除所有資料</div>
+      <div class="menu-item danger" data-action="wipeAll">16. 刪除所有資料</div>
     </div>
 
   </div>
@@ -693,12 +715,17 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
 
   <!-- 區塊4 -->
   <div class="bottombar">
-  <div class="page-tabs">
+  <div class="page-tabs" id="pageTabs">
       <button class="page-btn" data-page="1">P1</button>
       <button class="page-btn" data-page="2">P2</button>
       <button class="page-btn" data-page="3">P3</button>
       <button class="page-btn" data-page="4">P4</button>
       <button class="page-btn" data-page="5">P5</button>
+      <button class="page-btn" data-page="6">P6</button>
+      <button class="page-btn" data-page="7">P7</button>
+      <button class="page-btn" data-page="8">P8</button>
+      <button class="page-btn" data-page="9">P9</button>
+      <button class="page-btn" data-page="10">P10</button>
     </div>
     <button id="btnAdd" class="add-btn">＋</button>
   </div>
@@ -855,6 +882,41 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
       </div>
       <button class="btn page-star" data-page-star="5">☆</button>
     </div>
+    <div class="row page-meta-row">
+      <div class="field">
+        <label>Page 6 名稱</label>
+        <input type="text" data-page-name="6" />
+      </div>
+      <button class="btn page-star" data-page-star="6">☆</button>
+    </div>
+    <div class="row page-meta-row">
+      <div class="field">
+        <label>Page 7 名稱</label>
+        <input type="text" data-page-name="7" />
+      </div>
+      <button class="btn page-star" data-page-star="7">☆</button>
+    </div>
+    <div class="row page-meta-row">
+      <div class="field">
+        <label>Page 8 名稱</label>
+        <input type="text" data-page-name="8" />
+      </div>
+      <button class="btn page-star" data-page-star="8">☆</button>
+    </div>
+    <div class="row page-meta-row">
+      <div class="field">
+        <label>Page 9 名稱</label>
+        <input type="text" data-page-name="9" />
+      </div>
+      <button class="btn page-star" data-page-star="9">☆</button>
+    </div>
+    <div class="row page-meta-row">
+      <div class="field">
+        <label>Page 10 名稱</label>
+        <input type="text" data-page-name="10" />
+      </div>
+      <button class="btn page-star" data-page-star="10">☆</button>
+    </div>
   </div>
   <div class="modal-actions">
     <button class="btn" id="pageMetaExport">匯出設定檔</button>
@@ -876,9 +938,9 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
     </div>
 
     <div class="help-section">
-      <h4>分頁功能（Page 1 ～ Page 5）</h4>
+      <h4>分頁功能（Page 1 ～ Page 10）</h4>
       <p>
-        下方共有 5 個 Page 按鈕，每一頁都是獨立的資料集（各自一份 JSON）。
+        下方共有 10 個 Page 按鈕，每一頁都是獨立的資料集（各自一份 JSON）。
         例如可以把「工地帽」、「衣櫃」、「電腦配件」分別放在不同 Page，互不影響。
         「多分頁設定」中可以替每一頁改名字，並指定下次開啟時要預先載入哪一頁。
       </p>
@@ -924,7 +986,7 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
     <div id="transferModal" class="modal">
       <h3>平台轉移載入工具</h3>
       <div class="sub">
-        會從 <code>本機內部轉移專用json區</code> 嘗試讀取六個 JSON 檔，載入到對應 Page 的 localStorage。
+        會從 <code>本機內部轉移專用json區</code> 嘗試讀取 Meta 與 10 個 Page JSON 檔，載入到對應 Page 的 localStorage。
       </div>
       <div id="transferCheckList" class="stats-list">
         <!-- 這裡會動態塞「檢查中 / ✔️ / ❌」 -->
@@ -939,6 +1001,7 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
 (() => {
   const LS_KEY_BASE = "equip_planner_v1";
   const LS_META_KEY = LS_KEY_BASE + "_Meta";
+  const PAGE_COUNT = 10;
 
   const $ = sel => document.querySelector(sel);
   const main = $("#main");
@@ -962,6 +1025,7 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
   const btnAdd    = $("#btnAdd");
   const btnItemDelete = $("#itemDelete");
 
+  const pageTabs = $("#pageTabs");
   const pageButtons = Array.from(document.querySelectorAll(".page-btn"));
 
   // item form fields
@@ -980,6 +1044,8 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
   const itemModalTitle = $("#itemModalTitle");
 
   const toggles = {
+    seq: $("#tog-seq"),
+    pin: $("#tog-pin"),
     name: $("#tog-name"),
     code: $("#tog-code"),
     place: $("#tog-place"),
@@ -1002,6 +1068,7 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
       title: "請輸入裝備種類",
       activeCluster: 1,
       fieldVisibility: {
+        seq:true, pin:true,
         name:true, code:true, place:true, owner:true,
         status:true, note:true, disposal:true
       },
@@ -1061,7 +1128,7 @@ window.setupSnakeButton = setupSnakeButton;
   // ---------- 多分頁 / Meta helpers ----------
   function normalizePage(p){
     const n = Number(p) || 1;
-    return (n < 1 || n > 5) ? 1 : n;
+    return (n < 1 || n > PAGE_COUNT) ? 1 : n;
   }
 
   function getPageKey(page){
@@ -1070,9 +1137,13 @@ window.setupSnakeButton = setupSnakeButton;
   }
 
   function defaultMeta(){
+    const pageNames = {};
+    for(let i = 1; i <= PAGE_COUNT; i++){
+      pageNames[i] = "";
+    }
     return {
       startPage: 1,
-      pageNames: {1:"",2:"",3:"",4:"",5:""},
+      pageNames,
       showHelpOnStart: true   // ✅ 預設會自動顯示說明
     };
   }
@@ -1180,7 +1251,12 @@ const TRANSFER_FILES = [
   { key: "p2",    label: "EquipmentMangerP02.json", path: TRANSFER_BASE + "EquipmentMangerP02.json" },
   { key: "p3",    label: "EquipmentMangerP03.json", path: TRANSFER_BASE + "EquipmentMangerP03.json" },
   { key: "p4",    label: "EquipmentMangerP04.json", path: TRANSFER_BASE + "EquipmentMangerP04.json" },
-  { key: "p5",    label: "EquipmentMangerP05.json", path: TRANSFER_BASE + "EquipmentMangerP05.json" }
+  { key: "p5",    label: "EquipmentMangerP05.json", path: TRANSFER_BASE + "EquipmentMangerP05.json" },
+  { key: "p6",    label: "EquipmentMangerP06.json", path: TRANSFER_BASE + "EquipmentMangerP06.json" },
+  { key: "p7",    label: "EquipmentMangerP07.json", path: TRANSFER_BASE + "EquipmentMangerP07.json" },
+  { key: "p8",    label: "EquipmentMangerP08.json", path: TRANSFER_BASE + "EquipmentMangerP08.json" },
+  { key: "p9",    label: "EquipmentMangerP09.json", path: TRANSFER_BASE + "EquipmentMangerP09.json" },
+  { key: "p10",    label: "EquipmentMangerP10.json", path: TRANSFER_BASE + "EquipmentMangerP10.json" }
 ];
 
 // 這裡暫存每個檔案實際抓到的 raw text
@@ -1268,7 +1344,7 @@ function applyTransferJson(){
     }
 
     // 2. 各 Page：用 getPageKey，跟現有架構對齊
-    for(let i = 1; i <= 5; i++){
+    for(let i = 1; i <= PAGE_COUNT; i++){
       const raw = transferCache["p" + i];
       if(!raw) continue;
       const pageKey = getPageKey(i);        // ★ 這行改掉
@@ -1373,10 +1449,50 @@ document.addEventListener("click", (e) => {
   // 底部 Page 切換
   pageButtons.forEach(btn=>{
     const page = Number(btn.dataset.page);
-    btn.addEventListener("click", ()=>{
+    btn.addEventListener("click", (e)=>{
+      if(pageTabs?._dragMoved){
+        e.preventDefault();
+        return;
+      }
       switchPage(page);
     });
   });
+
+  // Page 按鈕過多時，底部 Page 區可按住左右拖曳
+  if(pageTabs){
+    let isDown = false;
+    let startX = 0;
+    let startScrollLeft = 0;
+
+    pageTabs.addEventListener("pointerdown", (e)=>{
+      isDown = true;
+      pageTabs._dragMoved = false;
+      startX = e.clientX;
+      startScrollLeft = pageTabs.scrollLeft;
+      pageTabs.classList.add("dragging");
+      pageTabs.setPointerCapture?.(e.pointerId);
+    });
+
+    pageTabs.addEventListener("pointermove", (e)=>{
+      if(!isDown) return;
+      const dx = e.clientX - startX;
+      if(Math.abs(dx) > 4){
+        pageTabs._dragMoved = true;
+      }
+      pageTabs.scrollLeft = startScrollLeft - dx;
+    });
+
+    const endDrag = (e)=>{
+      if(!isDown) return;
+      isDown = false;
+      pageTabs.classList.remove("dragging");
+      pageTabs.releasePointerCapture?.(e.pointerId);
+      setTimeout(()=>{ pageTabs._dragMoved = false; }, 0);
+    };
+    pageTabs.addEventListener("pointerup", endDrag);
+    pageTabs.addEventListener("pointercancel", endDrag);
+    pageTabs.addEventListener("pointerleave", endDrag);
+  }
 
   function switchPage(page){
     page = normalizePage(page);
@@ -1493,8 +1609,21 @@ document.addEventListener("click", (e) => {
       saveLocal();
       render();
     });
-    left.appendChild(seqBox);
-    left.appendChild(pinBox);
+    const showSeq = !!state.fieldVisibility.seq;
+    const showPin = !!state.fieldVisibility.pin;
+
+    if(showSeq){
+      left.appendChild(seqBox);
+    }
+
+    if(showPin){
+      left.appendChild(pinBox);
+    }
+
+    const leftCount = (showSeq ? 1 : 0) + (showPin ? 1 : 0);
+    if(leftCount === 1){
+      left.style.width = "calc(var(--row-cell) + 6px)";
+    }
 
     // mid
     const mid = document.createElement("div");
@@ -1546,7 +1675,9 @@ document.addEventListener("click", (e) => {
       right.appendChild(dBox);
     }
 
-    row.appendChild(left);
+    if(leftCount > 0){
+      row.appendChild(left);
+    }
     row.appendChild(mid);
     row.appendChild(right);
 
@@ -2028,7 +2159,8 @@ function collectOpenDefects(){
           const base = defaultMeta();
           const next = {
             startPage: base.startPage,
-            pageNames: {...base.pageNames}
+            pageNames: {...base.pageNames},
+            showHelpOnStart: base.showHelpOnStart
           };
 
           if(typeof data.startPage !== "undefined"){
@@ -2036,6 +2168,9 @@ function collectOpenDefects(){
           }
           if(data.pageNames && typeof data.pageNames === "object"){
             next.pageNames = {...next.pageNames, ...data.pageNames};
+          }
+          if(typeof data.showHelpOnStart === "boolean"){
+            next.showHelpOnStart = data.showHelpOnStart;
           }
 
           meta = next;
@@ -2046,10 +2181,7 @@ function collectOpenDefects(){
             inp.value = (meta.pageNames && meta.pageNames[p]) || "";
           });
 
-          updatePageButtons();    // 更新底部 P1~P5 顯示
-          updatePageMetaStars();  // 更新星星狀態
-          toast("已匯入多分頁設定");
-          updatePageButtons();    // 更新底部 P1~P5 顯示
+          updatePageButtons();    // 更新底部 Page 顯示
           updatePageMetaStars();  // 更新星星狀態
           toast("已匯入多分頁設定");
         }catch(err){
@@ -2142,7 +2274,11 @@ function collectOpenDefects(){
       lines.push(`群組：${g.name}`);
       arr.forEach((it, idx)=>{
         const seq = String(idx+1).padStart(2,"0");
-        const parts = [seq];
+      const parts = [];
+
+      if(state.fieldVisibility.seq){
+        parts.push(seq);
+      }
 
         visMid.forEach(k=>{
           const v = (k==="name"?it.name:
@@ -2156,7 +2292,12 @@ function collectOpenDefects(){
           parts.push(statusToEmoji(it.status));
         }
 
+        if(state.fieldVisibility.seq && parts.length > 1){
+        const first = parts.shift();
+        lines.push(first + "|" + parts.join("-"));
+      }else{
         lines.push(parts.join("-"));
+      }
       });
       lines.push(""); // blank line between groups
     }
