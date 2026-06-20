@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="version" content="破幹ios專用">
 <title>裝備規劃表</title>
 <style>
   :root{
@@ -701,7 +702,10 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
       <div class="menu-item" data-action="exportStatus">
         <div class="label">15. 匯出「現況」到剪貼簿</div>
       </div>
-      <div class="menu-item danger" data-action="wipeAll">16. 刪除所有資料</div>
+      <div class="menu-item" data-action="exportJSONText">
+        <div class="label">16. 匯出 JSON 到剪貼簿</div><div class="tag">copy</div>
+      </div>
+      <div class="menu-item danger" data-action="wipeAll">17. 刪除所有資料</div>
     </div>
 
   </div>
@@ -1206,6 +1210,13 @@ window.setupSnakeButton = setupSnakeButton;
     a.remove();
   }
 
+  async function exportJSONToClipboard(){
+    state.title = getTitle();
+    const text = JSON.stringify(state, null, 2);
+    await copyText(text);
+    toast("JSON 已複製到剪貼簿");
+  }
+
   function importJSON(){
     fileInput.value = "";
     fileInput.click();
@@ -1406,6 +1417,7 @@ document.addEventListener("click", (e) => {
       if(act==="pageMeta") { openPageMetaModal(); return; }
       if(act==="saveLS") saveLocal();
       if(act==="exportJSON") exportJSON();
+      if(act==="exportJSONText") exportJSONToClipboard();
       if(act==="importJSON") importJSON();
       if(act==="exportDefects") exportDefectsToClipboard();
       if(act==="exportStatus") exportStatusToClipboard();
