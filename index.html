@@ -3,7 +3,23 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="version" content="破幹ios專用">
+<!-- ====================
+     Version : 2.09
+
+     莎緹亞：
+     妳每次修改檔案就自己 +0.01。
+     不用過問我。
+     純註解修改也算。
+     ==================== -->
+<meta name="version" content="2.09">
+
+<!-- ====================
+     Framework Version
+     Version : none
+     本檔案不使用框架。
+     ==================== -->
+<meta name="framework-version" content="none">
+
 <title>裝備規劃表</title>
 <style>
   :root{
@@ -299,7 +315,48 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
     padding:8px; border-bottom:1px dashed var(--line);
     font-size:13px; display:flex; flex-wrap:wrap; gap:6px;
   }
+
   .closed-item:last-child{border-bottom:none;}
+
+  /* v2.08 closed defect: fixed three-row information layout */
+  .closed-item{
+    display:block;
+    padding:8px;
+  }
+  .closed-defect-grid{
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+    width:100%;
+  }
+  .closed-defect-line{
+    display:flex;
+    flex-wrap:wrap;
+    gap:5px;
+    align-items:stretch;
+  }
+  .closed-defect-chip{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    min-width:0;
+    padding:4px 7px;
+    border:1px solid #394566;
+    border-radius:7px;
+    background:#10172b;
+    color:var(--text);
+    line-height:1.35;
+  }
+  .closed-defect-chip .chip-label{
+    flex:none;
+    color:var(--muted);
+    font-size:11px;
+  }
+  .closed-defect-chip .chip-value{
+    min-width:0;
+    overflow-wrap:anywhere;
+  }
+
 
   /* group manager */
   .group-panel{
@@ -635,8 +692,34 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
 
 
 </style>
+
+<script>
+(function(){
+ var p=['【崩界櫻雪】Assets/Plugin/jszip.min.js','jszip.min.js'],i=0;
+ function n(){if(window.JSZip)return;if(i>=p.length){window.__equipmentZipLoadFailed=true;return;}
+  var x=document.createElement('script');x.src=p[i++];x.async=false;x.onload=function(){if(!window.JSZip)n()};x.onerror=n;document.head.appendChild(x)}
+ n();
+}());
+</script>
+
+
+<style>
+#equipmentCalibration{position:fixed;z-index:2147483646;top:0;right:0;bottom:0;left:0;display:flex;align-items:center;justify-content:center;padding:18px;background:#0b1017;color:#eef3f8;font:15px/1.55 "Segoe UI","Microsoft JhengHei",Arial,sans-serif}
+#equipmentCalibration[hidden]{display:none}
+#equipmentCalibration .paper-lens{width:100%;max-width:570px;padding:28px;border:1px solid #42556b;border-radius:16px;background:#17212c;box-shadow:0 24px 80px rgba(0,0,0,.7)}
+#equipmentCalibration h1{margin:0 0 8px;font-size:24px}
+#equipmentCalibration p{margin:8px 0;color:#b7c5d4}
+#equipmentCalibration .paper-code{margin:18px 0;padding:14px;border:1px solid #3b4c60;border-radius:9px;background:#0e151d;color:#8fd2ff;font:700 20px/1.4 Consolas,monospace;letter-spacing:1px;text-align:center;word-break:break-all;user-select:all}
+#equipmentCalibration input{display:block;width:100%;height:48px;margin:10px 0;padding:10px;border:1px solid #4a5d73;border-radius:8px;background:#0c131b;color:#fff;font:700 18px/1.45 Consolas,monospace;letter-spacing:1px;text-align:center;text-transform:uppercase}
+#equipmentCalibration button{width:100%;margin:0;padding:11px;border:1px solid #62aff6;border-radius:8px;background:#3186d8;color:#fff;cursor:pointer}
+#equipmentCalibration .paper-state{min-height:24px;margin-top:10px;text-align:center;color:#ffd28a}
+#equipmentCalibration .paper-note{font-size:12px;color:#8494a5}
+</style>
+
 </head>
 <body>
+<section id="equipmentCalibration" aria-modal="true" role="dialog" aria-labelledby="equipmentCalibrationTitle"><div class="paper-lens"><h1 id="equipmentCalibrationTitle">此工具尚未啟用</h1><p>請將下方安裝碼交給授權者，再輸入取得的授權碼。</p><div class="paper-code" id="equipmentRasterId">產生中…</div><input id="equipmentRasterToken" type="text" maxlength="19" spellcheck="false" autocomplete="off" inputmode="text" placeholder="XXXX-XXXX-XXXX-XXXX"><button id="equipmentRasterApply" type="button">驗證並永久啟用</button><div class="paper-state" id="equipmentRasterState"></div><p class="paper-note">授權記錄僅存在目前瀏覽器。清除網站資料、換瀏覽器或換電腦後，需重新取得授權。</p></div></section>
+
   <div id="bootScreen" class="boot-screen">
   <pre id="bootLines" class="boot-lines"></pre>
 </div>
@@ -653,69 +736,79 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
       <div class="menu-item" data-action="pageMeta">
         <div class="label">1. 多分頁設定</div><div class="tag">setting</div>
       </div>
+      <div class="menu-item" data-action="groups">
+        <div class="label">2. 群組設定</div><div class="tag">setting</div>
+      </div>
+      <div class="menu-item" data-action="defectStats">
+        <div class="label">3. 缺失統計</div><div class="tag">view</div>
+      </div>
+      <div class="menu-item" data-action="noteStats">
+        <div class="label">4. 備註統計</div><div class="tag">view</div>
+      </div>
+      <div class="divider"></div>
       <div class="menu-item" data-action="saveLS">
-        <div class="label">2. 儲存 localStorage</div><div class="tag">save</div>
+        <div class="label">5. 儲存 localStorage</div><div class="tag">save</div>
       </div>
       <div class="menu-item" data-action="exportJSON">
-        <div class="label">3. 匯出 JSON</div><div class="tag">export</div>
+        <div class="label">6. 匯出 ZIP</div><div class="tag">export</div>
       </div>
       <div class="menu-item" data-action="importJSON">
-        <div class="label">4. 匯入 JSON</div><div class="tag">import</div>
+        <div class="label">7. 匯入 ZIP / JSON</div><div class="tag">import</div>
       </div>
 
       <div class="divider"></div>
 
       <div class="menu-item" data-toggle="seq">
-        <div class="label">5. 編號</div><div class="toggle" id="tog-seq"></div>
+        <div class="label">8. 編號</div><div class="toggle" id="tog-seq"></div>
       </div>
       <div class="menu-item" data-toggle="pin">
-        <div class="label">6. 星號</div><div class="toggle" id="tog-pin"></div>
+        <div class="label">9. 星號</div><div class="toggle" id="tog-pin"></div>
       </div>
 
       <div class="menu-item" data-toggle="name">
-        <div class="label">7. 名稱</div><div class="toggle" id="tog-name"></div>
+        <div class="label">10. 名稱</div><div class="toggle" id="tog-name"></div>
       </div>
       <div class="menu-item" data-toggle="code">
-        <div class="label">8. 序號</div><div class="toggle" id="tog-code"></div>
+        <div class="label">11. 序號</div><div class="toggle" id="tog-code"></div>
       </div>
       <div class="menu-item" data-toggle="place">
-        <div class="label">9. 位置</div><div class="toggle" id="tog-place"></div>
+        <div class="label">12. 位置</div><div class="toggle" id="tog-place"></div>
       </div>
       <div class="menu-item" data-toggle="owner">
-        <div class="label">10. 持有人</div><div class="toggle" id="tog-owner"></div>
+        <div class="label">13. 持有人</div><div class="toggle" id="tog-owner"></div>
       </div>
       <div class="menu-item" data-toggle="status">
-        <div class="label">11. 狀態</div><div class="toggle" id="tog-status"></div>
+        <div class="label">14. 狀態</div><div class="toggle" id="tog-status"></div>
       </div>
       <div class="menu-item" data-toggle="note">
-        <div class="label">12. 狀況紀錄</div><div class="toggle" id="tog-note"></div>
+        <div class="label">15. 狀況紀錄</div><div class="toggle" id="tog-note"></div>
       </div>
       <div class="menu-item" data-toggle="disposal">
-        <div class="label">13. 處置狀況</div><div class="toggle" id="tog-disposal"></div>
+        <div class="label">16. 處置狀況</div><div class="toggle" id="tog-disposal"></div>
       </div>
 
       <div class="divider"></div>
 
       <div class="menu-item" data-action="exportDefects">
-        <div class="label">14. 匯出「缺失」到剪貼簿</div>
+        <div class="label">17. 匯出「缺失」到剪貼簿</div>
+      </div>
+      <div class="menu-item" data-action="exportNotes">
+        <div class="label">18. 匯出「備註」到剪貼簿</div>
       </div>
       <div class="menu-item" data-action="exportStatus">
-        <div class="label">15. 匯出「現況」到剪貼簿</div>
+        <div class="label">19. 匯出「現況」到剪貼簿</div>
       </div>
-      <div class="menu-item" data-action="exportJSONText">
-        <div class="label">16. 匯出 JSON 到剪貼簿</div><div class="tag">copy</div>
-      </div>
-      <div class="menu-item danger" data-action="wipeAll">17. 刪除所有資料</div>
+      <div class="menu-item danger" data-action="wipeAll">20. 刪除所有資料</div>
     </div>
 
   </div>
 
   <!-- 區塊2 -->
   <div class="topbar">
-    <button id="btnGroups" class="tb-btn">群組</button>
     <button id="btnSortA" class="tb-btn active">排序 A</button>
     <button id="btnSortB" class="tb-btn">排序 B</button>
-    <button id="btnStats"  class="tb-btn small">缺失統計</button>
+    <button id="btnSortC" class="tb-btn">排序 C</button>
+    <button id="btnSortD" class="tb-btn">排序 D</button>
   </div>
 
   <!-- 區塊3 -->
@@ -740,7 +833,7 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
 </div>
 
 <!-- hidden file input for import -->
-<input id="fileInput" type="file" accept="application/json" style="display:none" />
+<input id="fileInput" type="file" accept=".zip,.json" style="display:none" />
 
 <!-- overlay -->
 <div id="overlay" class="overlay"></div>
@@ -748,7 +841,7 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
 <!-- 群組管理 modal -->
 <div id="groupModal" class="modal">
   <h3>群組集群管理</h3>
-  <div class="sub">一個物件可同時設定兩個獨立的群組標籤，群組名稱可改、可刪。群組排序時會依照本頁面的順序做排序。</div>
+  <div class="sub">一個物件可同時設定四個獨立的群組標籤，群組名稱可改、可刪。群組排序時會依照本頁面的順序做排序。</div>
 
   <div class="group-panel">
     <div class="row" style="align-items:center; justify-content:space-between;">
@@ -766,6 +859,23 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
     <div id="groupList2" class="group-list"></div>
   </div>
 
+
+  <div class="group-panel">
+    <div class="row" style="align-items:center; justify-content:space-between;">
+      <div style="font-weight:800;">群組集群 C</div>
+      <button class="btn" data-addgroup="3">新增一個群組</button>
+    </div>
+    <div id="groupList3" class="group-list"></div>
+  </div>
+
+  <div class="group-panel">
+    <div class="row" style="align-items:center; justify-content:space-between;">
+      <div style="font-weight:800;">群組集群 D</div>
+      <button class="btn" data-addgroup="4">新增一個群組</button>
+    </div>
+    <div id="groupList4" class="group-list"></div>
+  </div>
+
   <div class="modal-actions">
     <button class="btn good" id="groupOk">確認</button>
     <button class="btn" id="groupCancel">取消</button>
@@ -778,14 +888,12 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
   <h3 id="itemModalTitle">編輯裝備</h3>
 
   <div class="row">
-    <div class="field">
-      <label>群組1</label>
-      <select id="fGroup1"></select>
-    </div>
-    <div class="field">
-      <label>群組2</label>
-      <select id="fGroup2"></select>
-    </div>
+    <div class="field"><label>群組1</label><select id="fGroup1"></select></div>
+    <div class="field"><label>群組2</label><select id="fGroup2"></select></div>
+  </div>
+  <div class="row">
+    <div class="field"><label>群組3</label><select id="fGroup3"></select></div>
+    <div class="field"><label>群組4</label><select id="fGroup4"></select></div>
   </div>
 
   <div class="row">
@@ -847,6 +955,16 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
   <div id="statsList" class="stats-list"></div>
   <div class="modal-actions">
     <button class="btn good" id="statsClose">關閉</button>
+  </div>
+</div>
+
+<!-- 備註統計 modal -->
+<div id="noteStatsModal" class="modal">
+  <h3>備註統計區</h3>
+  <div class="sub">集中顯示有填寫「狀況紀錄」的裝備。</div>
+  <div id="noteStatsList" class="stats-list"></div>
+  <div class="modal-actions">
+    <button class="btn good" id="noteStatsClose">關閉</button>
   </div>
 </div>
 
@@ -964,9 +1082,9 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
     </div>
 
     <div class="help-section">
-      <h4>JSON 匯出 / 匯入</h4>
+      <h4>ZIP 匯出 / 匯入</h4>
       <p>
-        JSON 匯出會備份當前 Page 的所有資料；匯入則會覆蓋目前這一頁的內容。
+        ZIP 匯出會備份當前 Page 的所有資料；匯入支援 ZIP 與舊版 JSON，並會覆蓋目前這一頁的內容。
         建議定期將 JSON 存到雲端或備份的位置，以免裝置遺失或瀏覽器資料被清除時造成資料流失。
       </p>
     </div>
@@ -1023,13 +1141,14 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
   const groupModal = $("#groupModal");
   const itemModal = $("#itemModal");
   const statsModal = $("#statsModal");
+  const noteStatsModal = $("#noteStatsModal");
   const pageMetaModal = $("#pageMetaModal");
   const helpModal = $("#helpModal");
 
-  const btnGroups = $("#btnGroups");
   const btnSortA = $("#btnSortA");
   const btnSortB = $("#btnSortB");
-  const btnStats  = $("#btnStats");
+  const btnSortC = $("#btnSortC");
+  const btnSortD = $("#btnSortD");
   const btnAdd    = $("#btnAdd");
   const btnItemDelete = $("#itemDelete");
 
@@ -1039,6 +1158,8 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
   // item form fields
   const fGroup1 = $("#fGroup1");
   const fGroup2 = $("#fGroup2");
+  const fGroup3 = $("#fGroup3");
+  const fGroup4 = $("#fGroup4");
   const fName   = $("#fName");
   const fCode   = $("#fCode");
   const fPlace  = $("#fPlace");
@@ -1088,7 +1209,9 @@ input, select, textarea { width:100%; max-width:100%; box-sizing:border-box; }
         2: [
           {id: uid("g2"), name:"預設B-1"},
           {id: uid("g2"), name:"預設B-2"},
-        ]
+        ],
+        3: [],
+        4: []
       },
       items: []
     };
@@ -1200,21 +1323,8 @@ window.setupSnakeButton = setupSnakeButton;
 
   function exportJSON(){
     state.title = getTitle();
-    const filename = (state.title || "裝備規劃表") + ".json";
-    const blob = new Blob([JSON.stringify(state, null, 2)], {type:"application/json"});
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-  }
-
-  async function exportJSONToClipboard(){
-    state.title = getTitle();
-    const text = JSON.stringify(state, null, 2);
-    await copyText(text);
-    toast("JSON 已複製到剪貼簿");
+    const baseName = (state.title || "裝備規劃表").replace(/[\\/:*?"<>|]/g," ").trim() || "裝備規劃表";
+    downloadEquipmentZip(baseName + ".zip", baseName + ".json", state);
   }
 
   function importJSON(){
@@ -1225,14 +1335,16 @@ window.setupSnakeButton = setupSnakeButton;
   fileInput.addEventListener("change", async e => {
     const file = e.target.files?.[0];
     if(!file) return;
-    const text = await file.text();
     try{
-      const data = JSON.parse(text);
+      const data = await readEquipmentTransferFile(file);
       applyImportedData(data);
       saveLocal();
-      toast("已匯入 JSON");
+      toast("已匯入資料");
     }catch(err){
-      alert("JSON 格式錯誤");
+      console.error(err);
+      alert("匯入失敗：" + err.message);
+    }finally{
+      fileInput.value = "";
     }
   });
 
@@ -1246,9 +1358,22 @@ window.setupSnakeButton = setupSnakeButton;
       clusters: {
         1: Array.isArray(data?.clusters?.[1]) ? data.clusters[1] : base.clusters[1],
         2: Array.isArray(data?.clusters?.[2]) ? data.clusters[2] : base.clusters[2],
+        3: Array.isArray(data?.clusters?.[3]) ? data.clusters[3] : [],
+        4: Array.isArray(data?.clusters?.[4]) ? data.clusters[4] : [],
       },
       items: Array.isArray(data?.items) ? data.items : []
     };
+    state.items.forEach(it=>{
+      if(!it.group3) it.group3="__ungrouped__";
+      if(!it.group4) it.group4="__ungrouped__";
+      it.group3 ||= "__ungrouped__";
+      it.group4 ||= "__ungrouped__";
+      it.defectsOpen ||= [];
+      it.defectsClosed ||= [];
+      it.defectsClosed.forEach(d=>{ if(!d.closedDate) d.closedDate="未知"; });
+      it.defectsClosed.forEach(d=>{ if(!d.closedDate) d.closedDate="未知"; });
+    });
+    if(![1,2,3,4].includes(Number(state.activeCluster))) state.activeCluster=1;
     setTitle(state.title);
     updateSortButtons();
     updateToggles();
@@ -1417,9 +1542,12 @@ document.addEventListener("click", (e) => {
       if(act==="pageMeta") { openPageMetaModal(); return; }
       if(act==="saveLS") saveLocal();
       if(act==="exportJSON") exportJSON();
-      if(act==="exportJSONText") exportJSONToClipboard();
       if(act==="importJSON") importJSON();
+      if(act==="groups") openGroupModal();
+      if(act==="defectStats") openStatsModal();
+      if(act==="noteStats") openNoteStatsModal();
       if(act==="exportDefects") exportDefectsToClipboard();
+      if(act==="exportNotes") exportNotesToClipboard();
       if(act==="exportStatus") exportStatusToClipboard();
       if(act==="wipeAll") wipeAllData();
       return;
@@ -1447,19 +1575,21 @@ document.addEventListener("click", (e) => {
     render();
   });
   btnSortB.addEventListener("click", () => {
-    state.activeCluster = 2;
-    updateSortButtons();
-    saveLocal();
-    render();
+    state.activeCluster = 2; updateSortButtons(); saveLocal(); render();
+  });
+  btnSortC.addEventListener("click", () => {
+    state.activeCluster = 3; updateSortButtons(); saveLocal(); render();
+  });
+  btnSortD.addEventListener("click", () => {
+    state.activeCluster = 4; updateSortButtons(); saveLocal(); render();
   });
 
   function updateSortButtons(){
     btnSortA.classList.toggle("active", state.activeCluster===1);
     btnSortB.classList.toggle("active", state.activeCluster===2);
+    btnSortC.classList.toggle("active", state.activeCluster===3);
+    btnSortD.classList.toggle("active", state.activeCluster===4);
   }
-
-  btnGroups.addEventListener("click", () => openGroupModal());
-  btnStats.addEventListener("click", () => openStatsModal());
   btnAdd.addEventListener("click", () => openItemModal(null));
 
   // 底部 Page 切換
@@ -1551,7 +1681,7 @@ document.addEventListener("click", (e) => {
     // items grouped by chosen cluster
     const groupsMap = new Map(); // gid -> items
     for(const it of state.items){
-      const gid = (clusterId===1 ? it.group1 : it.group2) || "__ungrouped__";
+      const gid = it["group"+clusterId] || "__ungrouped__";
       if(!groupsMap.has(gid)) groupsMap.set(gid, []);
       groupsMap.get(gid).push(it);
     }
@@ -1573,7 +1703,7 @@ document.addEventListener("click", (e) => {
       const items = (groupsMap.get(g._gid) || []).filter(it=>{
         // if group deleted, treat as ungrouped
         if(g._gid==="__ungrouped__"){
-          const real = clusterId===1 ? it.group1 : it.group2;
+          const real = it["group"+clusterId];
           return real==="__ungrouped__" || !idsSet.has(real);
         }
         return true;
@@ -1726,13 +1856,14 @@ document.addEventListener("click", (e) => {
     renderGroupLists();
   }
   function renderGroupLists(){
-    const list1 = $("#groupList1");
-    const list2 = $("#groupList2");
-    list1.innerHTML = "";
-    list2.innerHTML = "";
+    const lists = {
+      1: $("#groupList1"), 2: $("#groupList2"),
+      3: $("#groupList3"), 4: $("#groupList4")
+    };
+    Object.values(lists).forEach(list=>list.innerHTML="");
 
-  [1,2].forEach(cid=>{
-  const list   = cid===1 ? list1 : list2;
+  [1,2,3,4].forEach(cid=>{
+  const list = lists[cid];
   const groups = state.clusters[cid];
 
   list.innerHTML = "";
@@ -1824,6 +1955,8 @@ document.addEventListener("click", (e) => {
         id: uid("item"),
         group1: state.clusters[1][0]?.id || "__ungrouped__",
         group2: state.clusters[2][0]?.id || "__ungrouped__",
+        group3: state.clusters[3][0]?.id || "__ungrouped__",
+        group4: state.clusters[4][0]?.id || "__ungrouped__",
         name:"", code:"", place:"", owner:"",
         status:"正常", note:"",
         pinned:false, defectsOpen:[], defectsClosed:[]
@@ -1842,6 +1975,8 @@ document.addEventListener("click", (e) => {
     // write value
     fGroup1.value = it.group1;
     fGroup2.value = it.group2;
+    fGroup3.value = it.group3;
+    fGroup4.value = it.group4;
     fName.value = it.name||"";
     fCode.value = it.code||"";
     fPlace.value = it.place||"";
@@ -1872,6 +2007,8 @@ document.addEventListener("click", (e) => {
     };
     makeOpts(fGroup1,1);
     makeOpts(fGroup2,2);
+    makeOpts(fGroup3,3);
+    makeOpts(fGroup4,4);
   }
 
   function renderDefectsOpen(it){
@@ -1882,24 +2019,60 @@ document.addEventListener("click", (e) => {
   }
   function renderDefectsClosed(it){
     defectClosedList.innerHTML="";
-    it.defectsClosed.forEach(d=>{
-      const div=document.createElement("div");
-      div.className="closed-item";
-      div.innerHTML = `
-        <span class="badge">${escapeHtml(d.disposal||"")}</span>
-        <span>${escapeHtml(d.desc||"")}</span>
-        <span>${escapeHtml(d.part||"")}${d.qty?("×"+d.qty):""}</span>
-        <span>${escapeHtml(d.date||"")}</span>
-        <span>${escapeHtml(d.workNo||"")}</span>
-        <span>${escapeHtml(d.voucher||"")}</span>
-      `;
-      attachLongPressDelete(div, ()=>{
+    (it.defectsClosed || []).forEach(d=>{
+      const row=document.createElement("div");
+      row.className="closed-item";
+
+      const chip=(label,value)=>{
+        const el=document.createElement("div");
+        el.className="closed-defect-chip";
+        const l=document.createElement("span");
+        l.className="chip-label";
+        l.textContent=label;
+        const v=document.createElement("span");
+        v.className="chip-value";
+        v.textContent=(value===undefined || value===null || String(value).trim()==="") ? "—" : String(value);
+        el.append(l,v);
+        return el;
+      };
+      const line=()=>{
+        const el=document.createElement("div");
+        el.className="closed-defect-line";
+        return el;
+      };
+
+      const grid=document.createElement("div");
+      grid.className="closed-defect-grid";
+
+      const line1=line();
+      line1.append(
+        chip("缺失狀況", d.desc),
+        chip("申請料件", (d.part || "—") + (d.qty ? (" ×" + d.qty) : ""))
+      );
+
+      const line2=line();
+      line2.append(
+        chip("工令", d.workNo),
+        chip("憑單", d.voucher)
+      );
+
+      const line3=line();
+      line3.append(
+        chip("日期", d.date),
+        chip("結案日期", d.closedDate || "未知")
+      );
+
+      grid.append(line1,line2,line3);
+      row.appendChild(grid);
+
+      attachLongPressDelete(row, ()=>{
         if(confirm("刪除此結案缺失？（無法還原）")){
           it.defectsClosed = it.defectsClosed.filter(x=>x.id!==d.id);
           renderDefectsClosed(it);
         }
       });
-      defectClosedList.appendChild(div);
+
+      defectClosedList.appendChild(row);
     });
   }
 
@@ -1965,12 +2138,20 @@ document.addEventListener("click", (e) => {
         }
       }
       if(act==="close"){
-        if(confirm("結案此缺失？")){
-          it.defectsOpen = it.defectsOpen.filter(x=>x.id!==d.id);
-          it.defectsClosed.push(d);
-          renderDefectsOpen(it);
-          renderDefectsClosed(it);
+        const now=new Date();
+        const today=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0");
+        const closedDate=prompt("請輸入結案日期（YYYY-MM-DD）", today);
+        if(closedDate===null) return;
+        const value=closedDate.trim() || today;
+        if(!/^\d{4}-\d{2}-\d{2}$/.test(value)){
+          alert("結案日期格式請使用 YYYY-MM-DD");
+          return;
         }
+        d.closedDate=value;
+        it.defectsOpen = it.defectsOpen.filter(x=>x.id!==d.id);
+        it.defectsClosed.push(d);
+        renderDefectsOpen(it);
+        renderDefectsClosed(it);
       }
     });
 
@@ -1982,6 +2163,8 @@ document.addEventListener("click", (e) => {
 
     it.group1 = fGroup1.value || "__ungrouped__";
     it.group2 = fGroup2.value || "__ungrouped__";
+    it.group3 = fGroup3.value || "__ungrouped__";
+    it.group4 = fGroup4.value || "__ungrouped__";
     it.name   = fName.value.trim();
     it.code   = fCode.value.trim();
     it.place  = fPlace.value.trim();
@@ -2064,6 +2247,34 @@ function openStatsModal(){
 $("#statsClose").addEventListener("click", ()=>hideModal(statsModal));
 
 
+
+function collectNotes(){
+  return state.items
+    .filter(it=>String(it.note||"").trim())
+    .map(it=>({name:it.name||"", code:it.code||"", note:String(it.note||"").trim()}));
+}
+
+function openNoteStatsModal(){
+  const list=$("#noteStatsList");
+  const rows=collectNotes();
+  list.innerHTML="";
+  if(!rows.length){
+    const div=document.createElement("div");
+    div.className="stat-row white";
+    div.textContent="目前沒有備註資料";
+    list.appendChild(div);
+  }else{
+    rows.forEach(r=>{
+      const div=document.createElement("div");
+      div.className="stat-row white";
+      div.textContent=`${r.name}-${r.code}\n${r.note}`;
+      list.appendChild(div);
+    });
+  }
+  showModal(noteStatsModal);
+}
+$("#noteStatsClose").addEventListener("click", ()=>hideModal(noteStatsModal));
+
 function collectOpenDefects(){
   const out=[];
   state.items.forEach(it=>{
@@ -2131,81 +2342,71 @@ function collectOpenDefects(){
     });
   });
 
-  // 匯出設定檔（提醒 + 下載 meta json）
-  $("#pageMetaExport").addEventListener("click", ()=>{
+  // 匯出設定檔（ZIP 內含 meta JSON）
+  $("#pageMetaExport").addEventListener("click", async ()=>{
     alert("本功能主要用於使用者將轉移資料到不同載體時使用（如換新手機），而非交接局部頁面的資料給他人。");
-    const filename = "裝備規劃MetaSet.json";
-    const blob = new Blob([JSON.stringify(meta, null, 2)], {type:"application/json"});
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+    await downloadEquipmentZip("裝備規劃MetaSet.zip", "裝備規劃MetaSet.json", meta);
   });
-  // 匯入設定檔
+
+  // 匯入設定檔（支援新版 ZIP 與舊版 JSON）
   $("#pageMetaImport").addEventListener("click", ()=>{
-    // 提醒用途
     alert("請選擇先前匯出的多分頁設定檔。\n只會覆蓋 Page 名稱與預設頁面，裝備資料本身不會被更動。");
 
     const input = document.createElement("input");
     input.type = "file";
-    input.accept = "application/json,.json";
+    input.accept = ".zip,.json";
     input.style.display = "none";
     document.body.appendChild(input);
 
-    input.addEventListener("change", ()=>{
+    input.addEventListener("change", async ()=>{
       const file = input.files[0];
       if(!file){
         input.remove();
         return;
       }
-      const reader = new FileReader();
-      reader.onload = e=>{
-        input.remove();
-        try{
-          const data = JSON.parse(e.target.result);
+      try{
+        const data = await readEquipmentTransferFile(file);
 
-          if(!data || typeof data !== "object"){
-            alert("檔案格式不正確，無法載入設定。");
-            return;
-          }
-
-          // 只吃我們需要的欄位，其他全部忽略
-          const base = defaultMeta();
-          const next = {
-            startPage: base.startPage,
-            pageNames: {...base.pageNames},
-            showHelpOnStart: base.showHelpOnStart
-          };
-
-          if(typeof data.startPage !== "undefined"){
-            next.startPage = normalizePage(data.startPage);
-          }
-          if(data.pageNames && typeof data.pageNames === "object"){
-            next.pageNames = {...next.pageNames, ...data.pageNames};
-          }
-          if(typeof data.showHelpOnStart === "boolean"){
-            next.showHelpOnStart = data.showHelpOnStart;
-          }
-
-          meta = next;
-          saveMeta();
-          // 🔄 重新刷新「多分頁設定」視窗內的 input 顯示
-          document.querySelectorAll("[data-page-name]").forEach(inp=>{
-            const p = Number(inp.dataset.pageName);
-            inp.value = (meta.pageNames && meta.pageNames[p]) || "";
-          });
-
-          updatePageButtons();    // 更新底部 Page 顯示
-          updatePageMetaStars();  // 更新星星狀態
-          toast("已匯入多分頁設定");
-        }catch(err){
-          console.error(err);
-          alert("讀取設定檔時發生錯誤，請確認檔案內容是否正確。");
+        if(!data || typeof data !== "object"){
+          alert("檔案格式不正確，無法載入設定。");
+          return;
         }
-      };
-      reader.readAsText(file, "utf-8");
+
+        // 只吃我們需要的欄位，其他全部忽略
+        const base = defaultMeta();
+        const next = {
+          startPage: base.startPage,
+          pageNames: {...base.pageNames},
+          showHelpOnStart: base.showHelpOnStart
+        };
+
+        if(typeof data.startPage !== "undefined"){
+          next.startPage = normalizePage(data.startPage);
+        }
+        if(data.pageNames && typeof data.pageNames === "object"){
+          next.pageNames = {...next.pageNames, ...data.pageNames};
+        }
+        if(typeof data.showHelpOnStart === "boolean"){
+          next.showHelpOnStart = data.showHelpOnStart;
+        }
+
+        meta = next;
+        saveMeta();
+
+        document.querySelectorAll("[data-page-name]").forEach(inp=>{
+          const p = Number(inp.dataset.pageName);
+          inp.value = (meta.pageNames && meta.pageNames[p]) || "";
+        });
+
+        updatePageButtons();
+        updatePageMetaStars();
+        toast("已匯入多分頁設定");
+      }catch(err){
+        console.error(err);
+        alert("讀取設定檔時發生錯誤：" + err.message);
+      }finally{
+        input.remove();
+      }
     }, { once:true });
 
     input.click();
@@ -2216,7 +2417,47 @@ function collectOpenDefects(){
   });
 
 
+
+  async function ensureEquipmentJSZip(){
+    return new Promise((ok,no)=>{
+      if(window.JSZip) return ok(window.JSZip);
+      let n=0,t=setInterval(()=>{
+        if(window.JSZip){clearInterval(t);ok(window.JSZip);}
+        else if(++n>30){clearInterval(t);no(new Error("找不到 jszip.min.js"));}
+      },100);
+    });
+  }
+  async function downloadEquipmentZip(zipName,jsonName,obj){
+    try{
+      const Z=await ensureEquipmentJSZip(),z=new Z();
+      z.file(jsonName,JSON.stringify(obj,null,2));
+      const blob=await z.generateAsync({type:"blob",compression:"DEFLATE"});
+      const a=document.createElement("a");
+      a.href=URL.createObjectURL(blob);a.download=zipName;
+      document.body.appendChild(a);a.click();
+      setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);
+    }catch(err){alert("ZIP 匯出失敗："+err.message);}
+  }
+  async function readEquipmentTransferFile(file){
+    if((file.name||"").toLowerCase().endsWith(".json")){
+      return JSON.parse(await file.text());
+    }
+    const Z=await ensureEquipmentJSZip(),z=await Z.loadAsync(file);
+    const name=Object.keys(z.files).find(x=>!z.files[x].dir&&x.toLowerCase().endsWith(".json"));
+    if(!name) throw new Error("ZIP 裡找不到 JSON");
+    return JSON.parse(await z.files[name].async("string"));
+  }
+
+
   /* ---------- export to clipboard ---------- */
+
+async function exportNotesToClipboard(){
+  const rows=collectNotes();
+  const text=rows.map(r=>`${r.name}-${r.code}\n${r.note}`).join("\n\n");
+  await copyText(text || "");
+  toast("備註已複製到剪貼簿");
+}
+
  async function exportDefectsToClipboard(){
   const rows = collectOpenDefects();
   const text = rows.map(r =>
@@ -2261,7 +2502,7 @@ function collectOpenDefects(){
 
     const mapItemsByGroup = new Map();
     for(const it of state.items){
-      const gid = (clusterId===1 ? it.group1 : it.group2) || "__ungrouped__";
+      const gid = it["group"+clusterId] || "__ungrouped__";
       if(!mapItemsByGroup.has(gid)) mapItemsByGroup.set(gid, []);
       mapItemsByGroup.get(gid).push(it);
     }
@@ -2279,7 +2520,7 @@ function collectOpenDefects(){
       // gather items for this group
       const arr = (mapItemsByGroup.get(g._gid)||[]).filter(it=>{
         if(g._gid==="__ungrouped__"){
-          const real = clusterId===1 ? it.group1 : it.group2;
+          const real = it["group"+clusterId];
           return real==="__ungrouped__" || !idsSet.has(real);
         }
         return true;
@@ -2627,21 +2868,20 @@ function initBrowserWarning() {
       window.maybeShowHelpOnStart();
     }
   }
-  document.addEventListener("DOMContentLoaded", () => {
-  showBrowserWarning();   // 原本的
- 
-  setupSnakeButton();     // ← 你實際有定義的
-});
 }
 
 
 
+  // 啟動瀏覽器環境警告與使用說明 start
+  // 等 DOM 完整建立後，再啟動環境警告與蛇蛇平台轉移按鈕。
+  // initBrowserWarning 會在主流瀏覽器下接續 maybeShowHelpOnStart()。
+  document.addEventListener("DOMContentLoaded", () => {
+    initBrowserWarning();
+    setupSnakeButton();
+  });
+  // 啟動瀏覽器環境警告與使用說明 end
+
 })();
-document.addEventListener("DOMContentLoaded", () => {
-  setupSnakeButton();  // ← 這行是重點
-});
-
-
 document.title = location.pathname.split('/').pop().replace(/\.[^/.]+$/, '');
 
 </script>
@@ -2663,5 +2903,11 @@ document.title = location.pathname.split('/').pop().replace(/\.[^/.]+$/, '');
     </div>
   </div>
 </div>
+
+<script>
+/* v2.08：授權演算法與值星工具共用作者端鑰匙；本工具使用獨立的安裝碼與授權儲存槽。 */
+(function(){'use strict';var p='equipmentManager.canvasProfile.v1',q='equipmentManager.rasterCache.v1';var g=document.getElementById('equipmentCalibration'),i=document.getElementById('equipmentRasterId'),t=document.getElementById('equipmentRasterToken'),s=document.getElementById('equipmentRasterState'),b=document.getElementById('equipmentRasterApply');function f(a){var z='',n;for(n=0;n<a.length;n++){z+=String.fromCharCode(a[n]);}return btoa(z).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}function h(a){return String(a||'').toUpperCase().replace(/[^A-Z0-9]/g,'');}function x(a){return a.replace(/(.{4})(?=.)/g,'$1-');}function c(){var a=new Uint8Array(10),n,z='';if(window.crypto&&crypto.getRandomValues){crypto.getRandomValues(a);}else{for(n=0;n<a.length;n++){a[n]=(Math.random()*256)>>>0;}}z=f(a).toUpperCase().replace(/[^A-Z0-9]/g,'');while(z.length<16){z+=(Date.now().toString(36)+Math.random().toString(36).slice(2)).toUpperCase();}z=z.slice(0,16);return z.match(/.{1,4}/g).join('-');}function d(){try{return localStorage.getItem(p)||'';}catch(e){return '';}}function e(a){try{localStorage.setItem(p,a);return true;}catch(n){return false;}}function y(){try{return localStorage.getItem(q)||'';}catch(e){return '';}}function j(a){try{localStorage.setItem(q,a);return true;}catch(n){return false;}}function v(a){var z='7Q2M9K4X8D3P6R5V',r=[0x6D2B79F5,0x1B873593,0x85EBCA6B,0xC2B2AE35],n,o,k='';a=h(a)+'|'+z;for(n=0;n<a.length;n++){o=a.charCodeAt(n);r[n&3]=Math.imul((r[n&3]^o)>>>0,((n*2+1)|1))>>>0;r[(n+1)&3]=(r[(n+1)&3]+((r[n&3]<<7)|(r[n&3]>>>25))+o+n)>>>0;}z='K7M2Q9W4R8T3Y6P5A1S0D9F8G7H6J5L4Z3X2C1V0B9N8';for(n=0;n<16;n++){o=(r[n&3]^r[(n+1)&3]^(n*0x9E3779B9))>>>0;o=Math.imul(o^(o>>>16),0x45D9F3B)>>>0;k+=z.charAt(o%36);r[n&3]=(o+Math.imul(r[(n+2)&3],33+n))>>>0;}return x(k);}function u(){g.hidden=true;document.documentElement.style.overflow='';}var a=d();if(!a){a=c();if(!e(a)){s.textContent='無法使用本機儲存，請確認瀏覽器允許此檔案保存資料。';}}i.textContent=a;document.documentElement.style.overflow='hidden';var z=y();if(z){if(h(z)===h(v(a))){u();}else{s.textContent='已保存的授權與此安裝碼不符，請重新輸入。';}}t.oninput=function(){var z=h(t.value).slice(0,16);t.value=x(z);};b.onclick=function(){var z=x(h(t.value).slice(0,16));if(h(z).length!==16){s.textContent='請完整輸入 16 碼授權碼。';return;}b.disabled=true;s.textContent='正在驗證…';if(h(z)!==h(v(a))){s.style.color='#ffd28a';s.textContent='授權碼不正確或不屬於這組安裝碼。';b.disabled=false;return;}if(!j(z)){s.style.color='#ffd28a';s.textContent='驗證成功，但瀏覽器無法保存授權。';b.disabled=false;return;}s.style.color='#78d5a2';s.textContent='授權成功';setTimeout(u,350);b.disabled=false;};}());
+</script>
+
 </body>
 </html>
